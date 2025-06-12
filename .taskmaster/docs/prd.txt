@@ -1,0 +1,93 @@
+# Product Requirements Document (PRD)
+# Project Name: AutoFlow
+# Stack: Next.js (App Router), Tailwind CSS, SQLite or mock data, File Upload via local API
+# Goal: Build a functional POC to demo car purchase workflow for dealerships
+
+## Objective:
+Create a minimal functional mockup for a car dealership showroom web application where customers can browse cars, apply for credit, upload documents, and simulate the application process through an end-to-end digital flow.
+
+## Target Users:
+- Car buyers
+- Dealership finance team
+
+---
+
+## Key Features (POC Scope)
+
+### 1. Vehicle Inventory Page
+- [ ] List of available vehicles (static mock data)
+- [ ] Each listing includes:
+  - Vehicle image
+  - Price
+  - Basic details (Year, Make, Model, Mileage)
+  - “Apply Now” button linking to application flow
+
+### 2. Credit Application Form
+- [ ] Simple form capturing:
+  - Name, Email, Phone
+  - Income info
+  - Employment details
+- [ ] On submit: mock "Application Submitted" screen
+
+### 3. Document Upload (Stips Collection)
+- [ ] File uploader UI (accept PDFs/JPEGs)
+- [ ] Fields for:
+  - Driver’s License
+  - Proof of Income
+  - Proof of Residence
+  - Insurance Info
+  - Trade-in Info (optional)
+- [ ] Store in /uploads or mock API
+
+### 4. Review Page (Sales/Finance View)
+- [ ] Admin view of submitted applications with:
+  - User info
+  - Uploaded documents
+  - Button to “Simulate Lender Approval”
+
+### 5. Lender Approval Simulation
+- [ ] Click "Approve" generates mock approval terms
+- [ ] Select terms and confirm with customer (dummy step)
+
+### 6. E-Contracting (Mock)
+- [ ] Show placeholder PDF preview of contract
+- [ ] “Send for e-sign” button simulates sending contract
+- [ ] Button to “Sign Now” completes process
+
+### 7. Final Delivery Options
+- [ ] Choice to select:
+  - "Pick up vehicle"
+  - "Request home delivery"
+- [ ] Confirmation page
+
+### 8. Post-Delivery Message
+- [ ] Final screen with:
+  - "Thank You" message
+  - Summary of next steps
+  - Dummy download link for signed docs
+
+---
+
+## Tech Stack
+- Framework: Next.js (App Router)
+- Styling: Tailwind CSS
+- State: Server Actions / Client-side hooks
+- File Upload: API route to save to local `/uploads`
+- Database: JSON/mock objects or SQLite (optional)
+- Hosting: Vercel (for demo)
+
+---
+
+## Out of Scope for POC
+- Real credit score checks or API integration
+- Real document signing or DealerCenter API
+- Authentication & Authorization
+- Role management
+- Notifications (email/text)
+
+---
+
+## Notes:
+- This mockup is purely illustrative and meant for demo.
+- Build to show end-to-end UX flow, not backend integrations.
+

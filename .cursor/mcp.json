@@ -1,0 +1,26 @@
+{
+    "mcpServers": {
+      "firecrawl_composio": {
+        "url": "https://mcp.composio.dev/firecrawl/bitter-flat-army-eQ3uck"
+      },
+      "supabase_composio": {
+        "url": "https://mcp.composio.dev/supabase/bitter-flat-army-eQ3uck"
+      },
+      "context7": {
+        "command": "npx",
+        "args": ["-y", "@upstash/context7-mcp@latest"]
+      },
+      "git": {
+        "command": "uvx",
+        "args": ["mcp-server-git"]
+      },
+      "taskmaster-ai": {
+        "command": "npx",
+        "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+        "env": {
+          "GOOGLE_API_KEY": "AIzaSyAGXiB9aCAkA8uYPDF5TYvvwBdW_5416AA",
+          "OPENAI_API_KEY": "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"
+        }
+      }
+    }
+  }
