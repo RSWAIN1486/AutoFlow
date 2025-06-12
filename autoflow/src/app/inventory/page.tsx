@@ -14,7 +14,10 @@ import {
   Fuel, 
   Settings,
   Heart,
-  Eye
+  Eye,
+  Shield,
+  CheckCircle,
+  Star
 } from 'lucide-react';
 import { mockVehicles, Vehicle } from '@/lib/mockData';
 
@@ -275,6 +278,30 @@ function VehicleCard({ vehicle, isFavorite, onToggleFavorite }: VehicleCardProps
           {vehicle.make} {vehicle.model}
         </h3>
 
+        {/* CarFax/AutoCheck Scores */}
+        {(vehicle.carfaxScore || vehicle.autoCheckScore) && (
+          <div className="flex gap-3 mb-4">
+            {vehicle.carfaxScore && (
+              <div className="flex items-center bg-blue-50 px-3 py-2 rounded-lg">
+                <Shield className="h-4 w-4 mr-2 text-blue-600" />
+                <div className="text-xs">
+                  <div className="font-semibold text-blue-900">CarFax</div>
+                  <div className="text-blue-700">{vehicle.carfaxScore}/100</div>
+                </div>
+              </div>
+            )}
+            {vehicle.autoCheckScore && (
+              <div className="flex items-center bg-green-50 px-3 py-2 rounded-lg">
+                <CheckCircle className="h-4 w-4 mr-2 text-green-600" />
+                <div className="text-xs">
+                  <div className="font-semibold text-green-900">AutoCheck</div>
+                  <div className="text-green-700">{vehicle.autoCheckScore}/100</div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Details Grid */}
         <div className="space-y-2 mb-4">
           <div className="flex items-center text-sm text-gray-600">
@@ -303,6 +330,29 @@ function VehicleCard({ vehicle, isFavorite, onToggleFavorite }: VehicleCardProps
             </div>
           )}
         </div>
+
+        {/* Key Features */}
+        {vehicle.keyFeatures && vehicle.keyFeatures.length > 0 && (
+          <div className="mb-4">
+            <h4 className="text-sm font-semibold text-gray-900 mb-2 flex items-center">
+              <Star className="h-4 w-4 mr-1 text-yellow-500" />
+              Key Features
+            </h4>
+            <div className="space-y-1">
+              {vehicle.keyFeatures.slice(0, 3).map((feature, index) => (
+                <div key={index} className="flex items-center text-xs text-gray-600">
+                  <CheckCircle className="h-3 w-3 mr-2 text-green-500 flex-shrink-0" />
+                  <span className="truncate">{feature}</span>
+                </div>
+              ))}
+              {vehicle.keyFeatures.length > 3 && (
+                <div className="text-xs text-blue-600 font-medium">
+                  +{vehicle.keyFeatures.length - 3} more features
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Apply Now Button */}
         <motion.div

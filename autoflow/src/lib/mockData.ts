@@ -9,6 +9,9 @@ export interface Vehicle {
   color?: string;
   transmission?: string;
   fuelType?: string;
+  carfaxScore?: number; // 1-100 scale
+  autoCheckScore?: number; // 1-100 scale
+  keyFeatures?: string[];
 }
 
 export const mockVehicles: Vehicle[] = [
@@ -22,7 +25,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 15000,
     color: "Silver",
     transmission: "Automatic",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 92,
+    autoCheckScore: 89,
+    keyFeatures: [
+      "Honda Sensing Safety Suite",
+      "Keyless Entry & Push-Button Start",
+      "Apple CarPlay & Android Auto",
+      "Automatic Climate Control",
+      "LED Headlights",
+      "Backup Camera",
+      "Fuel-Efficient 1.5L Turbo Engine"
+    ]
   },
   {
     id: "2",
@@ -34,7 +48,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 8500,
     color: "White",
     transmission: "Automatic",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 95,
+    autoCheckScore: 93,
+    keyFeatures: [
+      "Toyota Safety Sense 2.0",
+      "Wireless Phone Charging",
+      "JBL Premium Audio System",
+      "Dual-Zone Climate Control",
+      "Smart Key with Push-Button Start",
+      "Blind Spot Monitor",
+      "Dynamic 2.5L 4-Cylinder Engine"
+    ]
   },
   {
     id: "3",
@@ -46,7 +71,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 2500,
     color: "Black",
     transmission: "Automatic",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 97,
+    autoCheckScore: 96,
+    keyFeatures: [
+      "BMW Intelligent Personal Assistant",
+      "Premium Leather Seating",
+      "Harman Kardon Surround Sound",
+      "Adaptive LED Headlights",
+      "Wireless Apple CarPlay",
+      "Active Driving Assistant",
+      "TwinPower Turbo Engine"
+    ]
   },
   {
     id: "4",
@@ -58,7 +94,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 22000,
     color: "Blue",
     transmission: "CVT",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 88,
+    autoCheckScore: 85,
+    keyFeatures: [
+      "Nissan Safety Shield 360",
+      "Intelligent Key with Remote Start",
+      "Bose Premium Audio",
+      "Zero Gravity Seats",
+      "ProPILOT Assist",
+      "Intelligent All-Wheel Drive",
+      "Variable Compression Turbo Engine"
+    ]
   },
   {
     id: "5",
@@ -70,7 +117,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 12000,
     color: "Red",
     transmission: "Manual",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 91,
+    autoCheckScore: 88,
+    keyFeatures: [
+      "5.0L V8 Coyote Engine",
+      "SYNC 3 Infotainment System",
+      "Recaro Sport Seats",
+      "Performance Package",
+      "Launch Control",
+      "Track Apps",
+      "Brembo Brakes"
+    ]
   },
   {
     id: "6",
@@ -82,7 +140,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 5000,
     color: "White",
     transmission: "Single Speed",
-    fuelType: "Electric"
+    fuelType: "Electric",
+    carfaxScore: 94,
+    autoCheckScore: 92,
+    keyFeatures: [
+      "Autopilot with Full Self-Driving Capability",
+      "15-inch Touchscreen Display",
+      "Over-the-Air Software Updates",
+      "Supercharger Network Access",
+      "Premium Interior & Sound",
+      "Glass Roof",
+      "358-Mile EPA Range"
+    ]
   },
   {
     id: "7",
@@ -94,7 +163,18 @@ export const mockVehicles: Vehicle[] = [
     mileage: 18000,
     color: "Gray",
     transmission: "Automatic",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 90,
+    autoCheckScore: 87,
+    keyFeatures: [
+      "Hyundai SmartSense Safety Suite",
+      "Wireless Device Charging",
+      "Bose Premium Audio",
+      "Digital Key Technology",
+      "Heated & Ventilated Seats",
+      "10.25-inch Touchscreen",
+      "Blue Link Connected Services"
+    ]
   },
   {
     id: "8",
@@ -106,6 +186,17 @@ export const mockVehicles: Vehicle[] = [
     mileage: 9500,
     color: "Green",
     transmission: "Manual",
-    fuelType: "Gasoline"
+    fuelType: "Gasoline",
+    carfaxScore: 89,
+    autoCheckScore: 86,
+    keyFeatures: [
+      "4x4 Off-Road Capability",
+      "Removable Doors & Roof",
+      "Rock-Trac 4WD System",
+      "Uconnect 4C NAV System",
+      "LED Lighting Package",
+      "Heavy-Duty Suspension",
+      "Trail Rated Badge"
+    ]
   }
 ]; 
