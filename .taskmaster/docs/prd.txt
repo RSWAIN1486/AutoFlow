@@ -20,7 +20,7 @@ Create a minimal functional mockup for a car dealership showroom web application
   - Vehicle image
   - Price
   - Basic details (Year, Make, Model, Mileage)
-  - “Apply Now” button linking to application flow
+  - "Apply Now" button linking to application flow
 
 ### 2. Credit Application Form
 - [ ] Simple form capturing:
@@ -28,11 +28,12 @@ Create a minimal functional mockup for a car dealership showroom web application
   - Income info
   - Employment details
 - [ ] On submit: mock "Application Submitted" screen
+- [ ] After submission: generate and display a unique customer portal link and secure upload link for the user (simulated, no real authentication; links are unique per application)
 
 ### 3. Document Upload (Stips Collection)
 - [ ] File uploader UI (accept PDFs/JPEGs)
 - [ ] Fields for:
-  - Driver’s License
+  - Driver's License
   - Proof of Income
   - Proof of Residence
   - Insurance Info
@@ -43,7 +44,7 @@ Create a minimal functional mockup for a car dealership showroom web application
 - [ ] Admin view of submitted applications with:
   - User info
   - Uploaded documents
-  - Button to “Simulate Lender Approval”
+  - Button to "Simulate Lender Approval"
 
 ### 5. Lender Approval Simulation
 - [ ] Click "Approve" generates mock approval terms
@@ -51,8 +52,8 @@ Create a minimal functional mockup for a car dealership showroom web application
 
 ### 6. E-Contracting (Mock)
 - [ ] Show placeholder PDF preview of contract
-- [ ] “Send for e-sign” button simulates sending contract
-- [ ] Button to “Sign Now” completes process
+- [ ] "Send for e-sign" button simulates sending contract
+- [ ] Button to "Sign Now" completes process
 
 ### 7. Final Delivery Options
 - [ ] Choice to select:
@@ -90,4 +91,5 @@ Create a minimal functional mockup for a car dealership showroom web application
 ## Notes:
 - This mockup is purely illustrative and meant for demo.
 - Build to show end-to-end UX flow, not backend integrations.
+- After credit application submission, a unique customer portal and upload link are generated and shown to the user (simulated, no real auth).
 

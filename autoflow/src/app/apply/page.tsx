@@ -18,6 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { mockVehicles } from '@/lib/mockData';
+import { submitApplication } from './actions';
 
 interface FormData {
   // Personal Information
@@ -117,13 +118,14 @@ export default function ApplyPage() {
 
   const handleSubmit = async () => {
     if (!validateStep(2)) return;
-    
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Redirect to confirmation page
-    window.location.href = '/application-submitted';
+    try {
+      const { id, token } = await submitApplication(formData);
+      window.location.href = `/application-submitted?appId=${id}&token=${token}`;
+    } catch (err) {
+      // Optionally handle error
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -385,27 +387,27 @@ export default function ApplyPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <span className="text-gray-600">Name:</span>
-                        <span className="ml-2 font-medium">{formData.firstName} {formData.lastName}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.firstName} {formData.lastName}</span>
                       </div>
                       <div>
                         <span className="text-gray-600">Email:</span>
-                        <span className="ml-2 font-medium">{formData.email}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.email}</span>
                       </div>
                       <div>
                         <span className="text-gray-600">Phone:</span>
-                        <span className="ml-2 font-medium">{formData.phone}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.phone}</span>
                       </div>
                       <div>
                         <span className="text-gray-600">Annual Income:</span>
-                        <span className="ml-2 font-medium">{formData.annualIncome}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.annualIncome}</span>
                       </div>
                       <div>
                         <span className="text-gray-600">Employment:</span>
-                        <span className="ml-2 font-medium">{formData.employmentStatus}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.employmentStatus}</span>
                       </div>
                       <div>
                         <span className="text-gray-600">Employer:</span>
-                        <span className="ml-2 font-medium">{formData.employerName}</span>
+                        <span className="ml-2 font-medium text-gray-900">{formData.employerName}</span>
                       </div>
                     </div>
                   </div>
