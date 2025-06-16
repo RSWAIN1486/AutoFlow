@@ -26,10 +26,14 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
     driversLicense: UploadedFile | null;
     proofOfIncome: UploadedFile | null;
     proofOfResidence: UploadedFile | null;
+    insuranceInfo: UploadedFile | null;
+    tradeInInfo: UploadedFile | null;
   }>({
     driversLicense: null,
     proofOfIncome: null,
     proofOfResidence: null,
+    insuranceInfo: null,
+    tradeInInfo: null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -58,7 +62,8 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
 
   const allDocumentsUploaded = uploadedFiles.driversLicense && 
                                uploadedFiles.proofOfIncome && 
-                               uploadedFiles.proofOfResidence;
+                               uploadedFiles.proofOfResidence &&
+                               uploadedFiles.insuranceInfo;
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -156,6 +161,18 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
           title="Proof of Residence"
           description="Utility bill, lease agreement, or bank statement with your address"
         />
+
+        <FileUploadArea
+          documentType="insuranceInfo"
+          title="Insurance Information"
+          description="Current auto insurance policy or proof of insurance"
+        />
+
+        <FileUploadArea
+          documentType="tradeInInfo"
+          title="Trade-in Information (Optional)"
+          description="Vehicle title, registration, or trade-in documentation"
+        />
       </div>
 
       <div className="border-t pt-6">
@@ -182,7 +199,7 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
         
         {!allDocumentsUploaded && (
           <p className="text-sm text-gray-500 mt-2 text-right">
-            Please upload all required documents to continue
+            Please upload all required documents to continue (Trade-in info is optional)
           </p>
         )}
       </div>

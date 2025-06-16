@@ -93,7 +93,7 @@ function ApplicationDetails({ appId }: { appId: string }) {
 
       <div className="text-center space-y-4">
         <Link 
-          href="/upload-documents" 
+          href={`/upload-documents?appId=${application.id}`}
           className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all mr-4"
         >
           Upload Documents
