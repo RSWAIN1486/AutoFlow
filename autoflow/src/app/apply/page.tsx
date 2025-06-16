@@ -18,7 +18,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { mockVehicles } from '@/lib/mockData';
-import { submitApplication } from './actions';
+import { submitCreditApplication } from './actions';
 
 interface FormData {
   // Personal Information
@@ -119,11 +119,27 @@ export default function ApplyPage() {
   const handleSubmit = async () => {
     if (!validateStep(2)) return;
     setIsSubmitting(true);
+    
+    // Create FormData object
+    const form = new FormData();
+    form.append('firstName', formData.firstName);
+    form.append('lastName', formData.lastName);
+    form.append('email', formData.email);
+    form.append('phone', formData.phone);
+    form.append('annualIncome', formData.annualIncome);
+    form.append('employmentStatus', formData.employmentStatus);
+    form.append('employer', formData.employerName);
+    form.append('jobTitle', formData.jobTitle);
+    
+    // Add selected vehicle data if available
+    if (selectedVehicle) {
+      form.append('selectedVehicle', JSON.stringify(selectedVehicle));
+    }
+    
     try {
-      const { id, token } = await submitApplication(formData);
-      window.location.href = `/application-submitted?appId=${id}&token=${token}`;
+      await submitCreditApplication(form);
     } catch (err) {
-      // Optionally handle error
+      console.error('Error submitting application:', err);
       setIsSubmitting(false);
     }
   };
