@@ -1,7 +1,27 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { getApplication } from '@/lib/applicationStore';
 import { CheckCircleIcon, DocumentCheckIcon, ClockIcon } from '@heroicons/react/24/outline';
 
-export default function DocumentsSubmittedPage() {
+interface PageProps {
+  searchParams: Promise<{ appId?: string }>;
+}
+
+function DocumentsSubmittedContent({ appId }: { appId: string }) {
+  const application = getApplication(parseInt(appId));
+
+  if (!application) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <p className="text-red-600 mb-4">Application not found.</p>
+          <Link href="/" className="text-blue-600 hover:underline">
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
@@ -16,7 +36,7 @@ export default function DocumentsSubmittedPage() {
             Documents Submitted Successfully!
           </h1>
           <p className="text-lg text-gray-600 mb-8">
-            Thank you! Your documents have been received and are being reviewed.
+            Thank you, {application.firstName}! Your documents have been received and are being reviewed.
           </p>
 
           {/* Status Steps */}
@@ -75,8 +95,11 @@ export default function DocumentsSubmittedPage() {
             </Link>
           </div>
 
-          {/* Contact Info */}
+          {/* Application Reference */}
           <div className="mt-8 pt-6 border-t border-gray-200">
+            <p className="text-sm text-gray-600 mb-4">
+              <span className="font-medium">Application ID:</span> {application.id}
+            </p>
             <p className="text-sm text-gray-600">
               Questions? Contact us at{' '}
               <a href="tel:555-0123" className="text-blue-600 hover:underline">
@@ -89,6 +112,35 @@ export default function DocumentsSubmittedPage() {
             </p>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export default async function DocumentsSubmittedPage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const appId = resolvedSearchParams.appId;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
+      <div className="max-w-2xl mx-auto">
+        <Suspense fallback={
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
+        }>
+          {appId ? (
+            <DocumentsSubmittedContent appId={appId} />
+          ) : (
+            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+              <p className="text-red-600 mb-4">No application ID provided.</p>
+              <Link href="/" className="text-blue-600 hover:underline">
+                Return to Home
+              </Link>
+            </div>
+          )}
+        </Suspense>
       </div>
     </div>
   );

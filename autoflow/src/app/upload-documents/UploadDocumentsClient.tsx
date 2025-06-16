@@ -55,8 +55,8 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
     // Simulate document processing
     await new Promise(resolve => setTimeout(resolve, 2000));
     
-    // Redirect to success page
-    router.push('/documents-submitted');
+    // Redirect to success page with application ID
+    router.push(`/documents-submitted?appId=${app.id}`);
     setIsSubmitting(false);
   };
 
