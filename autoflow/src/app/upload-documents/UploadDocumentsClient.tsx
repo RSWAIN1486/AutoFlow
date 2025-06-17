@@ -92,8 +92,13 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
       }
       
       const result = await response.json();
-      console.log('Upload successful:', result);
+      console.log('Upload response:', result);
       
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed');
+      }
+      
+      console.log('✅ Upload successful, redirecting to success page');
       // Redirect to success page with application ID
       router.push(`/documents-submitted?appId=${app.id}`);
     } catch (error) {

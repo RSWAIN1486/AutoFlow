@@ -95,15 +95,29 @@ const loadApplications = (): CreditApplication[] => {
   return [];
 };
 
-// Save applications to file
+// Save applications to file with better error handling and verification
 const saveApplications = () => {
   try {
     // Ensure we always write a valid JSON array
     const dataToSave = Array.isArray(applications) ? applications : [];
-    writeFileSync(STORE_FILE, JSON.stringify(dataToSave, null, 2));
+    const jsonData = JSON.stringify(dataToSave, null, 2);
+    
+    // Write to file synchronously to ensure completion
+    writeFileSync(STORE_FILE, jsonData, 'utf-8');
     console.log(`Saved ${dataToSave.length} applications to file`);
+    
+    // Verify the file was written correctly by reading it back
+    const verifyData = readFileSync(STORE_FILE, 'utf-8');
+    const parsedVerify = JSON.parse(verifyData);
+    
+    if (Array.isArray(parsedVerify) && parsedVerify.length === dataToSave.length) {
+      console.log(`✅ File save verification successful: ${parsedVerify.length} applications`);
+    } else {
+      console.error(`❌ File save verification failed: expected ${dataToSave.length}, got ${parsedVerify?.length || 'invalid'}`);
+    }
   } catch (error) {
     console.error('Error saving applications:', error);
+    throw error; // Re-throw to let caller handle the error
   }
 };
 
@@ -154,20 +168,40 @@ export const getAllApplications = (): CreditApplication[] => {
 };
 
 export const updateApplicationDocuments = (appId: number, documents: UploadedDocument[]): boolean => {
-  ensureApplicationsLoaded();
+  // Force reload to ensure we have the latest data
+  ensureApplicationsLoaded(true);
   console.log(`Looking for application with ID: ${appId}`);
   console.log(`Current applications in store:`, applications.map(a => ({ id: a.id, status: a.status })));
   
   const app = applications.find(a => a.id === appId);
   if (app) {
-    console.log(`Found application ${appId}, updating with ${documents.length} documents`);
+    console.log(`Found application ${appId}, current status: ${app.status}, updating with ${documents.length} documents`);
     app.uploadedDocuments = documents;
     app.status = 'documents-uploaded';
     console.log(`Application ${appId} status updated to: ${app.status}`);
-    saveApplications();
-    return true;
+    
+    // Save immediately and verify the save was successful
+    try {
+      saveApplications();
+      console.log(`Successfully saved application ${appId} with new status`);
+      
+      // Double-check by reloading and verifying the status was saved
+      const verification = loadApplications();
+      const verifyApp = verification.find(a => a.id === appId);
+      if (verifyApp && verifyApp.status === 'documents-uploaded') {
+        console.log(`✅ Verified: Application ${appId} status is correctly saved as ${verifyApp.status}`);
+        return true;
+      } else {
+        console.error(`❌ Verification failed: Application ${appId} status not saved correctly`);
+        return false;
+      }
+    } catch (error) {
+      console.error(`Error saving application ${appId}:`, error);
+      return false;
+    }
   } else {
     console.error(`Application with ID ${appId} not found in store`);
+    console.log(`Available application IDs:`, applications.map(a => a.id));
   }
   return false;
 };

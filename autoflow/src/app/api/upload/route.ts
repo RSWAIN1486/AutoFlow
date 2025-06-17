@@ -54,15 +54,23 @@ export async function POST(request: NextRequest) {
 
     // Update application with uploaded documents if appId is provided
     if (appId) {
-      console.log(`Attempting to update application ${appId} with ${uploadedFiles.length} documents`);
+      console.log(`🔄 Attempting to update application ${appId} with ${uploadedFiles.length} documents at ${new Date().toISOString()}`);
       const updated = updateApplicationDocuments(appId, uploadedFiles);
       if (!updated) {
-        console.warn(`Failed to update application ${appId} with uploaded documents`);
+        console.error(`❌ Failed to update application ${appId} with uploaded documents`);
+        return NextResponse.json(
+          { success: false, error: 'Failed to update application status' },
+          { status: 500 }
+        );
       } else {
-        console.log(`Successfully updated application ${appId} with uploaded documents`);
+        console.log(`✅ Successfully updated application ${appId} with uploaded documents at ${new Date().toISOString()}`);
       }
     } else {
-      console.warn('No appId provided in upload request');
+      console.warn('⚠️ No appId provided in upload request');
+      return NextResponse.json(
+        { success: false, error: 'No application ID provided' },
+        { status: 400 }
+      );
     }
 
     return NextResponse.json({
