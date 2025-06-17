@@ -34,17 +34,17 @@ export async function submitCreditApplication(formData: FormData) {
   }
 
   // Add to store
-  const applicationId = addApplication({
+  const application = addApplication({
     ...applicationData,
     selectedVehicle
   });
 
   console.log('Credit application submitted:', {
-    id: applicationId,
+    id: application.id,
     ...applicationData,
     selectedVehicle
   });
 
-  // Redirect to confirmation page
-  redirect(`/application-submitted?appId=${applicationId}`);
+  // Redirect to confirmation page with token
+  redirect(`/application-submitted?appId=${application.id}&token=${application.token}`);
 } 

@@ -4,10 +4,10 @@ import { getApplication } from '@/lib/applicationStore';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 
 interface PageProps {
-  searchParams: Promise<{ appId?: string }>;
+  searchParams: Promise<{ appId?: string; token?: string }>;
 }
 
-function ApplicationDetails({ appId }: { appId: string }) {
+function ApplicationDetails({ appId, token }: { appId: string; token?: string }) {
   const application = getApplication(parseInt(appId));
 
   if (!application) {
@@ -91,12 +91,49 @@ function ApplicationDetails({ appId }: { appId: string }) {
         </ul>
       </div>
 
+      <div className="bg-green-50 rounded-xl p-6 mb-8">
+        <h3 className="font-semibold text-green-900 mb-4">Your Secure Links</h3>
+        <div className="space-y-3">
+          <div>
+            <p className="text-sm font-medium text-green-800 mb-1">Customer Portal:</p>
+            <div className="bg-white rounded-lg p-3 border border-green-200">
+              <code className="text-sm text-gray-700 break-all">
+                {typeof window !== 'undefined' ? window.location.origin : ''}/portal/{application.id}?token={application.token}
+              </code>
+              <Link 
+                href={`/portal/${application.id}?token=${application.token}`}
+                className="ml-3 text-green-600 hover:text-green-800 text-sm font-medium"
+              >
+                Visit Portal →
+              </Link>
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-green-800 mb-1">Document Upload Link:</p>
+            <div className="bg-white rounded-lg p-3 border border-green-200">
+              <code className="text-sm text-gray-700 break-all">
+                {typeof window !== 'undefined' ? window.location.origin : ''}/upload-documents/{application.id}?token={application.token}
+              </code>
+              <Link 
+                href={`/upload-documents/${application.id}?token=${application.token}`}
+                className="ml-3 text-green-600 hover:text-green-800 text-sm font-medium"
+              >
+                Upload Now →
+              </Link>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-green-700 mt-3">
+          💡 Save these links! You can use them to access your application and upload documents at any time.
+        </p>
+      </div>
+
       <div className="text-center space-y-4">
         <Link 
-          href={`/upload-documents?appId=${application.id}`}
+          href={`/upload-documents/${application.id}?token=${application.token}`}
           className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all mr-4"
         >
-          Upload Documents
+          Upload Documents Now
         </Link>
         <Link 
           href="/inventory" 
@@ -118,6 +155,7 @@ function ApplicationDetails({ appId }: { appId: string }) {
 export default async function ApplicationSubmittedPage({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const appId = resolvedSearchParams.appId;
+  const token = resolvedSearchParams.token;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-12 px-4">
@@ -128,7 +166,7 @@ export default async function ApplicationSubmittedPage({ searchParams }: PagePro
         </div>
       }>
         {appId ? (
-          <ApplicationDetails appId={appId} />
+          <ApplicationDetails appId={appId} token={token} />
         ) : (
           <div className="max-w-2xl mx-auto text-center">
             <p className="text-red-600 mb-4">No application ID provided.</p>

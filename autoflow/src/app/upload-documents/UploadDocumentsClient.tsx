@@ -20,6 +20,10 @@ interface UploadedFile {
   file: File;
 }
 
+interface UploadDocumentsClientProps {
+  app: App;
+}
+
 export default function UploadDocumentsClient({ app }: UploadDocumentsClientProps) {
   const router = useRouter();
   const [uploadedFiles, setUploadedFiles] = useState<{
@@ -52,12 +56,51 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
   const handleSubmitDocuments = async () => {
     setIsSubmitting(true);
     
-    // Simulate document processing
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Redirect to success page with application ID
-    router.push(`/documents-submitted?appId=${app.id}`);
-    setIsSubmitting(false);
+    try {
+      // Create FormData with all uploaded files
+      const formData = new FormData();
+      
+      // Add each uploaded file to FormData
+      if (uploadedFiles.driversLicense) {
+        formData.append('driversLicense', uploadedFiles.driversLicense.file);
+      }
+      if (uploadedFiles.proofOfIncome) {
+        formData.append('proofOfIncome', uploadedFiles.proofOfIncome.file);
+      }
+      if (uploadedFiles.proofOfResidence) {
+        formData.append('proofOfResidence', uploadedFiles.proofOfResidence.file);
+      }
+      if (uploadedFiles.insuranceInfo) {
+        formData.append('insuranceInfo', uploadedFiles.insuranceInfo.file);
+      }
+      if (uploadedFiles.tradeInInfo) {
+        formData.append('tradeInInfo', uploadedFiles.tradeInInfo.file);
+      }
+      
+      // Add application ID for reference
+      formData.append('appId', app.id.toString());
+      
+      // Upload files to the API
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to upload documents');
+      }
+      
+      const result = await response.json();
+      console.log('Upload successful:', result);
+      
+      // Redirect to success page with application ID
+      router.push(`/documents-submitted?appId=${app.id}`);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Failed to upload documents. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const allDocumentsUploaded = uploadedFiles.driversLicense && 
