@@ -30,7 +30,7 @@ export default function ApprovalButton({ applicationId, status }: ApprovalButton
       
       if (response.ok && result.success) {
         setApprovalResult(result.approvalTerms);
-        setToastMessage(`✅ Approval Complete! Loan: $${result.approvalTerms.loanAmount.toLocaleString()}, Rate: ${result.approvalTerms.interestRate}% APR, Payment: $${result.approvalTerms.monthlyPayment}/mo`);
+        setToastMessage(`🏦 Westlake Financial Approval! Loan: $${result.approvalTerms.loanAmount.toLocaleString()}, Rate: ${result.approvalTerms.interestRate}% APR, Payment: $${result.approvalTerms.monthlyPayment}/mo`);
         setToastType('success');
         setShowToast(true);
         // Show success animation for 3 seconds, then refresh
@@ -63,7 +63,7 @@ export default function ApprovalButton({ applicationId, status }: ApprovalButton
         <div className="flex items-center px-4 py-2 bg-green-100 border border-green-300 rounded-md">
           <div className="animate-spin rounded-full h-4 w-4 border-2 border-green-600 border-t-transparent mr-2"></div>
           <span className="text-green-700 text-sm font-medium">
-            ✅ Approved! Refreshing...
+            🏦 Westlake Approved! Refreshing...
           </span>
         </div>
       </div>

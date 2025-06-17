@@ -168,29 +168,57 @@ export default function AdminReviewPage() {
 
                   {app.approvalTerms && (
                     <div className="mb-6">
-                      <h4 className="text-sm font-medium text-gray-900 mb-3">Approval Terms</h4>
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                          <div>
-                            <span className="font-medium text-emerald-800">Loan Amount:</span>
-                            <div className="text-emerald-700">${app.approvalTerms.loanAmount.toLocaleString()}</div>
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">Lender Approval Terms</h4>
+                      <div className="bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 rounded-lg p-4">
+                        <div className="flex items-center mb-3 pb-3 border-b border-blue-200">
+                          <div className="flex items-center space-x-3">
+                            <img 
+                              src="/westlake-logo.png" 
+                              alt="Westlake Financial Logo" 
+                              className="w-10 h-10 object-contain"
+                            />
+                            <div>
+                              <div className="font-bold text-blue-800 text-sm">Westlake Financial</div>
+                              <div className="text-xs text-blue-600">Full Spectrum Auto Financing</div>
+                            </div>
                           </div>
-                          <div>
-                            <span className="font-medium text-emerald-800">Interest Rate:</span>
-                            <div className="text-emerald-700">{app.approvalTerms.interestRate}% APR</div>
-                          </div>
-                          <div>
-                            <span className="font-medium text-emerald-800">Term:</span>
-                            <div className="text-emerald-700">{app.approvalTerms.termLength} months</div>
-                          </div>
-                          <div>
-                            <span className="font-medium text-emerald-800">Monthly Payment:</span>
-                            <div className="text-emerald-700">${app.approvalTerms.monthlyPayment.toLocaleString()}</div>
+                          <div className="ml-auto">
+                            <div className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                              ✅ APPROVED
+                            </div>
                           </div>
                         </div>
-                        <div className="mt-3 pt-3 border-t border-emerald-200 text-xs text-emerald-600">
-                          <div><span className="font-medium">Approval ID:</span> {app.approvalTerms.approvalId}</div>
-                          <div><span className="font-medium">Approved:</span> {formatDate(app.approvalTerms.approvedAt)}</div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium text-blue-800">Loan Amount:</span>
+                            <div className="text-blue-700 font-semibold">${app.approvalTerms.loanAmount.toLocaleString()}</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-blue-800">Interest Rate:</span>
+                            <div className="text-blue-700 font-semibold">{app.approvalTerms.interestRate}% APR</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-blue-800">Term:</span>
+                            <div className="text-blue-700 font-semibold">{app.approvalTerms.termLength} months</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-blue-800">Monthly Payment:</span>
+                            <div className="text-blue-700 font-semibold">${app.approvalTerms.monthlyPayment.toLocaleString()}</div>
+                          </div>
+                        </div>
+                        <div className="mt-4 pt-3 border-t border-blue-200">
+                          <div className="flex justify-between items-center text-xs">
+                            <div className="text-blue-600">
+                              <span className="font-medium">Approval ID:</span> {app.approvalTerms.approvalId}
+                            </div>
+                            <div className="text-blue-600">
+                              <span className="font-medium">Approved:</span> {formatDate(app.approvalTerms.approvedAt)}
+                            </div>
+                          </div>
+                          <div className="mt-2 text-xs text-blue-600 flex items-center justify-between">
+                            <span>📞 Westlake Support: (888) 893-7937</span>
+                            <span className="text-blue-500">24/7/365 Instant Approvals</span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -218,4 +246,4 @@ export default function AdminReviewPage() {
       </div>
     </div>
   );
-} 
+}
