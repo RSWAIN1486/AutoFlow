@@ -1,6 +1,6 @@
 import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
-import { DocumentTextIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, HomeIcon } from '@heroicons/react/24/outline';
 import ApprovalButton from './ApprovalButton';
 import RefreshButton from './RefreshButton';
 
@@ -63,7 +63,17 @@ export default function AdminReviewPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Review Dashboard</h1>
               <p className="text-gray-600">Review submitted credit applications and manage the approval process</p>
             </div>
-            <RefreshButton />
+            <div className="flex space-x-3">
+              <Link
+                href="/"
+                className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                title="Go to Homepage"
+              >
+                <HomeIcon className="h-4 w-4 mr-2" />
+                Home
+              </Link>
+              <RefreshButton />
+            </div>
           </div>
         </div>
 
