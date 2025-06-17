@@ -1,6 +1,7 @@
 import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
 import { DocumentTextIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import ApprovalButton from './ApprovalButton';
 
 export default function AdminReviewPage() {
   const applications = getAllApplications();
@@ -156,17 +157,7 @@ export default function AdminReviewPage() {
                       >
                         View Portal
                       </Link>
-                      {app.status === 'documents-uploaded' && (
-                        <button
-                          className="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700 transition-colors"
-                          onClick={() => {
-                            // This will be implemented in the next task (Task 9)
-                            alert('Lender approval simulation will be implemented in the next step!');
-                          }}
-                        >
-                          Simulate Lender Approval
-                        </button>
-                      )}
+                      <ApprovalButton applicationId={app.id} status={app.status} />
                     </div>
                   </div>
                 </div>

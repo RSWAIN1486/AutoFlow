@@ -30,10 +30,27 @@ export default async function PortalPage({ params, searchParams }: { params: Pro
             <div><span className="font-medium">Name:</span> {app.firstName} {app.lastName}</div>
             <div><span className="font-medium">Email:</span> {app.email}</div>
             <div><span className="font-medium">Phone:</span> {app.phone}</div>
-            <div><span className="font-medium">Status:</span> Submitted</div>
+            <div><span className="font-medium">Status:</span> {app.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</div>
           </div>
         </div>
-        <Link href={`/upload-documents/${app.id}?token=${app.token}`} className="mt-2 text-blue-600 hover:underline">Upload Required Documents</Link>
+        {(app.status === 'documents-pending' || app.status === 'submitted') && (
+          <Link href={`/upload-documents/${app.id}?token=${app.token}`} className="mt-2 inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+            Upload Required Documents
+          </Link>
+        )}
+        {app.status === 'documents-uploaded' && (
+          <div className="mt-2 text-green-600 font-medium">✅ Documents uploaded successfully</div>
+        )}
+        {app.uploadedDocuments && app.uploadedDocuments.length > 0 && (
+          <div className="mt-4">
+            <h3 className="font-medium text-gray-900 mb-2">Uploaded Documents:</h3>
+            <ul className="text-sm text-gray-600 space-y-1">
+              {app.uploadedDocuments.map((doc, index) => (
+                <li key={index}>• {doc.fieldName.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}: {doc.originalName}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         <Link href="/" className="mt-4 text-blue-600 hover:underline">Return to Home</Link>
       </div>
     </div>

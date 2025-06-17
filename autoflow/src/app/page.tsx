@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Car, CreditCard, FileText, ArrowRight, Star, Shield, Clock } from "lucide-react";
+import { Car, CreditCard, FileText, ArrowRight, Star, Shield, Clock, Settings } from "lucide-react";
 
 export default function Home() {
   const containerVariants = {
@@ -42,16 +42,31 @@ export default function Home() {
               <Car className="h-8 w-8 text-blue-400" />
               <span className="text-2xl font-bold text-white">AutoFlow</span>
             </motion.div>
-            <div className="hidden md:flex space-x-8">
-              <Link href="/inventory" className="text-white hover:text-blue-400 transition-colors">
-                Inventory
-              </Link>
-              <Link href="/apply" className="text-white hover:text-blue-400 transition-colors">
-                Financing
-              </Link>
-              <Link href="/about" className="text-white hover:text-blue-400 transition-colors">
-                About
-              </Link>
+            <div className="flex items-center space-x-8">
+              <div className="hidden md:flex space-x-8">
+                <Link href="/inventory" className="text-white hover:text-blue-400 transition-colors">
+                  Inventory
+                </Link>
+                <Link href="/apply" className="text-white hover:text-blue-400 transition-colors">
+                  Financing
+                </Link>
+                <Link href="/about" className="text-white hover:text-blue-400 transition-colors">
+                  About
+                </Link>
+              </div>
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/admin/review"
+                  className="bg-white/10 hover:bg-white/20 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 flex items-center gap-2 border border-white/30 backdrop-blur-sm text-sm"
+                  title="Admin Review Panel"
+                >
+                  <Settings className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Link>
+              </motion.div>
             </div>
           </div>
         </div>

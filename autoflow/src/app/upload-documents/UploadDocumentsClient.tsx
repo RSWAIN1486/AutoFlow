@@ -79,6 +79,7 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
       
       // Add application ID for reference
       formData.append('appId', app.id.toString());
+      console.log('Uploading documents for application ID:', app.id);
       
       // Upload files to the API
       const response = await fetch('/api/upload', {
