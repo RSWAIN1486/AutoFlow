@@ -2,9 +2,14 @@ import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
 import { DocumentTextIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import ApprovalButton from './ApprovalButton';
+import RefreshButton from './RefreshButton';
+
+// Force dynamic rendering to ensure fresh data
+export const dynamic = 'force-dynamic';
 
 export default function AdminReviewPage() {
   const applications = getAllApplications();
+  console.log('Admin page loaded applications:', applications.map(a => ({ id: a.id, status: a.status, documentsCount: a.uploadedDocuments?.length || 0 })));
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -53,8 +58,13 @@ export default function AdminReviewPage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Review Dashboard</h1>
-          <p className="text-gray-600">Review submitted credit applications and manage the approval process</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Review Dashboard</h1>
+              <p className="text-gray-600">Review submitted credit applications and manage the approval process</p>
+            </div>
+            <RefreshButton />
+          </div>
         </div>
 
         {applications.length === 0 ? (
@@ -142,6 +152,36 @@ export default function AdminReviewPage() {
                             </a>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {app.approvalTerms && (
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">Approval Terms</h4>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium text-emerald-800">Loan Amount:</span>
+                            <div className="text-emerald-700">${app.approvalTerms.loanAmount.toLocaleString()}</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-emerald-800">Interest Rate:</span>
+                            <div className="text-emerald-700">{app.approvalTerms.interestRate}% APR</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-emerald-800">Term:</span>
+                            <div className="text-emerald-700">{app.approvalTerms.termLength} months</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-emerald-800">Monthly Payment:</span>
+                            <div className="text-emerald-700">${app.approvalTerms.monthlyPayment.toLocaleString()}</div>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-emerald-200 text-xs text-emerald-600">
+                          <div><span className="font-medium">Approval ID:</span> {app.approvalTerms.approvalId}</div>
+                          <div><span className="font-medium">Approved:</span> {formatDate(app.approvalTerms.approvedAt)}</div>
+                        </div>
                       </div>
                     </div>
                   )}

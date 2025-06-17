@@ -6,6 +6,15 @@ export interface UploadedDocument {
   uploadedAt: Date;
 }
 
+export interface ApprovalTerms {
+  loanAmount: number;
+  interestRate: number;
+  termLength: number; // in months
+  monthlyPayment: number;
+  approvedAt: Date;
+  approvalId: string;
+}
+
 export interface CreditApplication {
   id: number;
   firstName: string;
@@ -27,6 +36,7 @@ export interface CreditApplication {
   token: string;
   uploadedDocuments?: UploadedDocument[];
   status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected';
+  approvalTerms?: ApprovalTerms;
 }
 
 import { writeFileSync, readFileSync, existsSync } from 'fs';
@@ -38,8 +48,22 @@ const STORE_FILE = join(process.cwd(), '.applications.json');
 const loadApplications = (): CreditApplication[] => {
   try {
     if (existsSync(STORE_FILE)) {
-      const data = readFileSync(STORE_FILE, 'utf-8');
+      const data = readFileSync(STORE_FILE, 'utf-8').trim();
+      
+      // Handle empty file
+      if (!data) {
+        console.log('Applications file is empty, starting with empty array');
+        return [];
+      }
+      
       const parsed = JSON.parse(data);
+      
+      // Handle case where file contains non-array data
+      if (!Array.isArray(parsed)) {
+        console.warn('Applications file does not contain an array, starting with empty array');
+        return [];
+      }
+      
       // Convert date strings back to Date objects
       return parsed.map((app: any) => ({
         ...app,
@@ -47,11 +71,26 @@ const loadApplications = (): CreditApplication[] => {
         uploadedDocuments: app.uploadedDocuments?.map((doc: any) => ({
           ...doc,
           uploadedAt: new Date(doc.uploadedAt)
-        })) || []
+        })) || [],
+        approvalTerms: app.approvalTerms ? {
+          ...app.approvalTerms,
+          approvedAt: new Date(app.approvalTerms.approvedAt)
+        } : undefined
       }));
     }
   } catch (error) {
     console.error('Error loading applications:', error);
+    // If file is corrupted, create a backup and start fresh
+    if (existsSync(STORE_FILE)) {
+      try {
+        const backupFile = STORE_FILE + '.backup.' + Date.now();
+        const data = readFileSync(STORE_FILE, 'utf-8');
+        writeFileSync(backupFile, data);
+        console.log(`Corrupted applications file backed up to: ${backupFile}`);
+      } catch (backupError) {
+        console.error('Error creating backup:', backupError);
+      }
+    }
   }
   return [];
 };
@@ -59,8 +98,10 @@ const loadApplications = (): CreditApplication[] => {
 // Save applications to file
 const saveApplications = () => {
   try {
-    writeFileSync(STORE_FILE, JSON.stringify(applications, null, 2));
-    console.log(`Saved ${applications.length} applications to file`);
+    // Ensure we always write a valid JSON array
+    const dataToSave = Array.isArray(applications) ? applications : [];
+    writeFileSync(STORE_FILE, JSON.stringify(dataToSave, null, 2));
+    console.log(`Saved ${dataToSave.length} applications to file`);
   } catch (error) {
     console.error('Error saving applications:', error);
   }
@@ -108,7 +149,7 @@ export const getApplication = (id: number): CreditApplication | undefined => {
 };
 
 export const getAllApplications = (): CreditApplication[] => {
-  ensureApplicationsLoaded();
+  ensureApplicationsLoaded(true); // Always force reload to get fresh data
   return applications;
 };
 
@@ -139,6 +180,24 @@ export const updateApplicationStatus = (appId: number, status: CreditApplication
     saveApplications();
     return true;
   }
+  return false;
+};
+
+export const updateApplicationWithApproval = (appId: number, approvalTerms: Omit<ApprovalTerms, 'approvedAt' | 'approvalId'>): boolean => {
+  ensureApplicationsLoaded();
+  const app = applications.find(a => a.id === appId);
+  if (app) {
+    app.approvalTerms = {
+      ...approvalTerms,
+      approvedAt: new Date(),
+      approvalId: `APPR-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+    };
+    app.status = 'approved';
+    saveApplications();
+    console.log(`Application ${appId} approved with terms:`, app.approvalTerms);
+    return true;
+  }
+  console.error(`Application with ID ${appId} not found for approval`);
   return false;
 };
 

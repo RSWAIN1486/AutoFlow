@@ -1,9 +1,10 @@
-import { applications } from '@/lib/applicationStore';
+import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
 
 export default async function PortalPage({ params, searchParams }: { params: Promise<{ appId: string }>, searchParams: Promise<{ token?: string }> }) {
   const { appId } = await params;
   const { token } = await searchParams;
+  const applications = getAllApplications();
   const app = applications.find(a => String(a.id) === appId && a.token === token);
 
   if (!app) {
