@@ -72,60 +72,26 @@ function ApplicationDetails({ appId, token }: { appId: string; token?: string })
         )}
 
         <div className="mt-6 pt-6 border-t border-gray-200">
-          <p className="text-sm text-gray-600">
-            <span className="font-medium">Application ID:</span> {application.id}
-          </p>
-          <p className="text-sm text-gray-600">
-            <span className="font-medium">Submitted:</span> {application.submittedAt.toLocaleString()}
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-blue-50 rounded-xl p-6 mb-8">
-        <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
-        <ul className="text-blue-800 space-y-1 text-sm">
-          <li>• Our finance team will review your application within 24 hours</li>
-          <li>• You'll receive an email notification with the decision</li>
-          <li>• If approved, we'll contact you to schedule a vehicle inspection</li>
-          <li>• Keep an eye on your email for updates</li>
-        </ul>
-      </div>
-
-      <div className="bg-green-50 rounded-xl p-6 mb-8">
-        <h3 className="font-semibold text-green-900 mb-4">Your Secure Links</h3>
-        <div className="space-y-3">
-          <div>
-            <p className="text-sm font-medium text-green-800 mb-1">Customer Portal:</p>
-            <div className="bg-white rounded-lg p-3 border border-green-200">
-              <code className="text-sm text-gray-700 break-all">
-                {typeof window !== 'undefined' ? window.location.origin : ''}/portal/{application.id}?token={application.token}
-              </code>
-              <Link 
-                href={`/portal/${application.id}?token=${application.token}`}
-                className="ml-3 text-green-600 hover:text-green-800 text-sm font-medium"
-              >
-                Visit Portal →
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Application ID:</span> {application.id}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Submitted:</span> {application.submittedAt.toLocaleString()}
+              </p>
             </div>
-          </div>
-          <div>
-            <p className="text-sm font-medium text-green-800 mb-1">Document Upload Link:</p>
-            <div className="bg-white rounded-lg p-3 border border-green-200">
-              <code className="text-sm text-gray-700 break-all">
-                {typeof window !== 'undefined' ? window.location.origin : ''}/upload-documents/{application.id}?token={application.token}
-              </code>
-              <Link 
-                href={`/upload-documents/${application.id}?token=${application.token}`}
-                className="ml-3 text-green-600 hover:text-green-800 text-sm font-medium"
-              >
-                Upload Now →
-              </Link>
+            <div>
+              <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
+              <ul className="text-blue-800 space-y-1 text-sm">
+                <li>• Our finance team will review your application within 24 hours</li>
+                <li>• You'll receive an email notification with the decision</li>
+                <li>• If approved, we'll contact you to schedule a vehicle inspection</li>
+                <li>• Keep an eye on your email for updates</li>
+              </ul>
             </div>
           </div>
         </div>
-        <p className="text-xs text-green-700 mt-3">
-          💡 Save these links! You can use them to access your application and upload documents at any time.
-        </p>
       </div>
 
       <div className="text-center space-y-4">
