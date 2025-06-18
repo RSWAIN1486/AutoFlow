@@ -37,6 +37,12 @@ export interface CreditApplication {
   uploadedDocuments?: UploadedDocument[];
   status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected' | 'contract-sent' | 'contract-signed';
   approvalTerms?: ApprovalTerms;
+  deliveryChoice?: 'pickup' | 'home-delivery';
+  deliveryDetails?: {
+    scheduledDate?: string;
+    scheduledTime?: string;
+    deliveryAddress?: string;
+  };
 }
 
 // Conditional imports for server-side only
@@ -283,6 +289,29 @@ export const markContractSigned = (appId: number): boolean => {
     return true;
   }
   console.error(`Application with ID ${appId} not found for contract-signed update`);
+  return false;
+};
+
+// Update application delivery choice and details
+export const updateDeliveryChoice = (
+  appId: number, 
+  deliveryChoice: 'pickup' | 'home-delivery',
+  deliveryDetails?: {
+    scheduledDate?: string;
+    scheduledTime?: string;
+    deliveryAddress?: string;
+  }
+): boolean => {
+  ensureApplicationsLoaded(true);
+  const app = applications.find(a => a.id === appId);
+  if (app) {
+    app.deliveryChoice = deliveryChoice;
+    app.deliveryDetails = deliveryDetails;
+    saveApplications();
+    console.log(`Application ${appId} delivery choice updated to: ${deliveryChoice}`, deliveryDetails);
+    return true;
+  }
+  console.error(`Application with ID ${appId} not found for delivery choice update`);
   return false;
 };
 
