@@ -7,9 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Car, 
   Search, 
-  Filter, 
   ArrowRight, 
-  MapPin, 
   Calendar, 
   Fuel, 
   Settings,

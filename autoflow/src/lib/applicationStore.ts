@@ -46,15 +46,17 @@ export interface CreditApplication {
 }
 
 // Conditional imports for server-side only
-let fs: any;
-let path: any;
+let fs: typeof import('fs') | undefined;
+let path: typeof import('path') | undefined;
 let STORE_FILE: string;
 
 // Only import fs and path when running on server side
 if (typeof window === 'undefined') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   fs = require('fs');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   path = require('path');
-  STORE_FILE = path.join(process.cwd(), '.applications.json');
+  STORE_FILE = path?.join(process.cwd(), '.applications.json') ?? '.applications.json';
 }
 
 // Load applications from file on startup (server-side only)
@@ -83,10 +85,10 @@ const loadApplications = (): CreditApplication[] => {
       }
       
       // Convert date strings back to Date objects
-      return parsed.map((app: any) => ({
+      return parsed.map((app: CreditApplication & { submittedAt: string; uploadedDocuments?: (UploadedDocument & { uploadedAt: string })[]; approvalTerms?: ApprovalTerms & { approvedAt: string } }) => ({
         ...app,
         submittedAt: new Date(app.submittedAt),
-        uploadedDocuments: app.uploadedDocuments?.map((doc: any) => ({
+        uploadedDocuments: app.uploadedDocuments?.map((doc: UploadedDocument & { uploadedAt: string }) => ({
           ...doc,
           uploadedAt: new Date(doc.uploadedAt)
         })) || [],

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { getAllApplications } from '@/lib/applicationStore';
 import { DocumentTextIcon, HomeIcon } from '@heroicons/react/24/outline';
 import ApprovalButton from './ApprovalButton';
@@ -171,7 +172,7 @@ export default function AdminReviewPage() {
                               <p className="text-xs text-gray-500 truncate">{doc.originalName}</p>
                             </div>
                             <a 
-                              href={doc.path} 
+                              href={`/uploads/${doc.filename}`} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="ml-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
@@ -190,9 +191,11 @@ export default function AdminReviewPage() {
                       <div className="bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 rounded-lg p-4">
                         <div className="flex items-center mb-3 pb-3 border-b border-blue-200">
                           <div className="flex items-center space-x-3">
-                            <img 
+                            <Image 
                               src="/westlake-logo.png" 
                               alt="Westlake Financial Logo" 
+                              width={40}
+                              height={40}
                               className="w-10 h-10 object-contain"
                             />
                             <div>

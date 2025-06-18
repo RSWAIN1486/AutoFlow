@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Car, CreditCard, FileText, ArrowRight, Star, Shield, Clock, Settings } from "lucide-react";
+import { Car, CreditCard, ArrowRight, Shield, Clock, Settings } from "lucide-react";
 import CustomerPortal from "./components/CustomerPortal";
 
 export default function Home() {
@@ -181,7 +181,7 @@ export default function Home() {
               Why Choose AutoFlow?
             </h2>
             <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-              We've revolutionized the car buying experience with cutting-edge technology 
+              We&apos;ve revolutionized the car buying experience with cutting-edge technology 
               and customer-first approach.
             </p>
           </div>

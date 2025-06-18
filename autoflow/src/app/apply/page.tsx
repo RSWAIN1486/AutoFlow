@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,7 +41,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-export default function ApplyPage() {
+function ApplyPageContent() {
   const searchParams = useSearchParams();
   const vehicleId = searchParams.get('vehicleId');
   const selectedVehicle = vehicleId ? mockVehicles.find(v => v.id === vehicleId) : null;
@@ -431,7 +431,7 @@ export default function ApplyPage() {
                   <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
                     <h4 className="font-semibold text-blue-900 mb-2">Next Steps</h4>
                     <p className="text-blue-800 text-sm">
-                      After submitting your application, you'll receive an instant pre-approval decision. 
+                      After submitting your application, you&apos;ll receive an instant pre-approval decision. 
                       Our finance team will then contact you within 24 hours to finalize your loan terms.
                     </p>
                   </div>
@@ -488,7 +488,7 @@ export default function ApplyPage() {
 
 interface FormFieldProps {
   label: string;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   type: string;
   value: string;
   onChange: (value: string) => void;
@@ -523,5 +523,13 @@ function FormField({ label, icon: Icon, type, value, onChange, error, placeholde
         </p>
       )}
     </div>
+  );
+}
+
+export default function ApplyPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">Loading...</div>}>
+      <ApplyPageContent />
+    </Suspense>
   );
 } 

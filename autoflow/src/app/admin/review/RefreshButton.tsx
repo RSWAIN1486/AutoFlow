@@ -1,10 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 
 export default function RefreshButton() {
-  const router = useRouter();
 
   const handleRefresh = () => {
     // Force a hard refresh with timestamp to bypass caching

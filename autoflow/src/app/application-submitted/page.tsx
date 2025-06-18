@@ -7,7 +7,7 @@ interface PageProps {
   searchParams: Promise<{ appId?: string; token?: string }>;
 }
 
-function ApplicationDetails({ appId, token }: { appId: string; token?: string }) {
+function ApplicationDetails({ appId }: { appId: string; token?: string }) {
   const application = getApplication(parseInt(appId));
 
   if (!application) {
@@ -82,11 +82,11 @@ function ApplicationDetails({ appId, token }: { appId: string; token?: string })
               </p>
             </div>
             <div>
-              <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">What&apos;s Next?</h3>
               <ul className="text-blue-800 space-y-1 text-sm">
                 <li>• Our finance team will review your application within 24 hours</li>
-                <li>• You'll receive an email notification with the decision</li>
-                <li>• If approved, we'll contact you to schedule a vehicle inspection</li>
+                <li>• You&apos;ll receive an email notification with the decision</li>
+                <li>• If approved, we&apos;ll contact you to schedule a vehicle inspection</li>
                 <li>• Keep an eye on your email for updates</li>
               </ul>
             </div>

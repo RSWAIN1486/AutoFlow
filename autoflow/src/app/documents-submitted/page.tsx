@@ -63,7 +63,7 @@ function DocumentsSubmittedContent({ appId }: { appId: string }) {
                 <CheckCircleIcon className="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="font-medium text-gray-700">Final Approval</p>
-                  <p className="text-sm text-gray-600">You'll receive an email with the final decision</p>
+                  <p className="text-sm text-gray-600">You&apos;ll receive an email with the final decision</p>
                 </div>
               </div>
             </div>
@@ -75,7 +75,7 @@ function DocumentsSubmittedContent({ appId }: { appId: string }) {
             <ul className="text-sm text-blue-800 space-y-1 text-left">
               <li>• Keep your phone available - we may call for verification</li>
               <li>• Check your email regularly for updates</li>
-              <li>• If approved, we'll schedule a vehicle inspection</li>
+                              <li>• If approved, we&apos;ll schedule a vehicle inspection</li>
             </ul>
           </div>
 

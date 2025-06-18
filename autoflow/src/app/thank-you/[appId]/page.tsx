@@ -7,7 +7,7 @@ interface PageProps {
   searchParams: Promise<{ token?: string }>;
 }
 
-function ThankYouContent({ appId, token }: { appId: string; token?: string }) {
+function ThankYouContent({ appId }: { appId: string; token?: string }) {
   const application = getApplication(parseInt(appId));
 
   if (!application) {
@@ -133,7 +133,7 @@ function ThankYouContent({ appId, token }: { appId: string; token?: string }) {
 
         {/* Next Steps */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 text-left">
-          <h3 className="text-lg font-semibold text-blue-900 mb-3">What's Next?</h3>
+          <h3 className="text-lg font-semibold text-blue-900 mb-3">What&apos;s Next?</h3>
           <div className="space-y-3">
             <div className="flex items-start">
               <div className="flex-shrink-0 w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium mr-3 mt-0.5">

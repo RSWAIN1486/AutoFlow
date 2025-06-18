@@ -10,7 +10,13 @@ interface ApprovalButtonProps {
 
 export default function ApprovalButton({ applicationId, status }: ApprovalButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [approvalResult, setApprovalResult] = useState<any>(null);
+  const [approvalResult, setApprovalResult] = useState<{
+    loanAmount: number;
+    interestRate: number;
+    termLength: number;
+    monthlyPayment: number;
+    approvalId: string;
+  } | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');

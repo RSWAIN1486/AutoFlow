@@ -8,7 +8,7 @@ interface PageProps {
   searchParams: Promise<{ token?: string }>;
 }
 
-function DeliveryOptionsContent({ appId, token }: { appId: string; token?: string }) {
+function DeliveryOptionsContent({ appId }: { appId: string; token?: string }) {
   const application = getApplication(parseInt(appId));
 
   if (!application) {

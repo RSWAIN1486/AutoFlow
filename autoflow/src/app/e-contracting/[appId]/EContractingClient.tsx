@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { DocumentTextIcon, PencilSquareIcon, PaperAirplaneIcon, TruckIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import type { CreditApplication } from '@/lib/applicationStore';
@@ -101,9 +102,11 @@ export default function EContractingClient({ application }: EContractingClientPr
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <h3 className="font-medium text-gray-900 mb-3 flex items-center">
-              <img 
+              <Image 
                 src="/westlake-logo.png" 
                 alt="Westlake Financial Logo" 
+                width={20}
+                height={20}
                 className="w-5 h-5 object-contain mr-2"
               />
               Lender Information
@@ -134,9 +137,11 @@ export default function EContractingClient({ application }: EContractingClientPr
         {application.approvalTerms && (
           <div className="bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 rounded-lg p-6">
             <h3 className="font-medium text-gray-900 mb-4 flex items-center">
-              <img 
+              <Image 
                 src="/westlake-logo.png" 
                 alt="Westlake Financial Logo" 
+                width={32}
+                height={32}
                 className="w-8 h-8 object-contain mr-2"
               />
               Loan Terms
