@@ -25,6 +25,10 @@ export default function AdminReviewPage() {
         return 'bg-emerald-100 text-emerald-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
+      case 'contract-sent':
+        return 'bg-cyan-100 text-cyan-800';
+      case 'contract-signed':
+        return 'bg-indigo-100 text-indigo-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -39,6 +43,18 @@ export default function AdminReviewPage() {
         return <ClockIcon className="h-5 w-5" />;
       case 'rejected':
         return <ExclamationTriangleIcon className="h-5 w-5" />;
+      case 'contract-sent':
+        return (
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+        );
+      case 'contract-signed':
+        return (
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
+        );
       default:
         return <DocumentTextIcon className="h-5 w-5" />;
     }
@@ -235,7 +251,17 @@ export default function AdminReviewPage() {
                       >
                         View Portal
                       </Link>
-                      <ApprovalButton applicationId={app.id} status={app.status} />
+                      {app.status === 'approved' && app.approvalTerms ? (
+                        <Link
+                          href={`/e-contracting/${app.id}`}
+                          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                        >
+                          <DocumentTextIcon className="h-4 w-4" />
+                          Send for E-Contracting
+                        </Link>
+                      ) : (
+                        <ApprovalButton applicationId={app.id} status={app.status} />
+                      )}
                     </div>
                   </div>
                 </div>

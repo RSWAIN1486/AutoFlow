@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Car, CreditCard, FileText, ArrowRight, Star, Shield, Clock, Settings } from "lucide-react";
+import CustomerPortal from "./components/CustomerPortal";
 
 export default function Home() {
   const containerVariants = {
@@ -141,6 +142,28 @@ export default function Home() {
               <div className="text-gray-400">Customer Rating</div>
             </div>
           </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Customer Portal Section */}
+      <motion.section 
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        viewport={{ once: true }}
+        className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-900/30 to-purple-900/30 backdrop-blur-sm border-y border-white/10"
+      >
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Customer Portal
+            </h2>
+            <p className="text-lg text-gray-300">
+              Have an approved application? Access your e-contracting portal below.
+            </p>
+          </div>
+
+          <CustomerPortal />
         </div>
       </motion.section>
 

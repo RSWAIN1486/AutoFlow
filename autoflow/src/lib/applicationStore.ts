@@ -35,20 +35,32 @@ export interface CreditApplication {
   submittedAt: Date;
   token: string;
   uploadedDocuments?: UploadedDocument[];
-  status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected';
+  status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected' | 'contract-sent' | 'contract-signed';
   approvalTerms?: ApprovalTerms;
 }
 
-import { writeFileSync, readFileSync, existsSync } from 'fs';
-import { join } from 'path';
+// Conditional imports for server-side only
+let fs: any;
+let path: any;
+let STORE_FILE: string;
 
-const STORE_FILE = join(process.cwd(), '.applications.json');
+// Only import fs and path when running on server side
+if (typeof window === 'undefined') {
+  fs = require('fs');
+  path = require('path');
+  STORE_FILE = path.join(process.cwd(), '.applications.json');
+}
 
-// Load applications from file on startup
+// Load applications from file on startup (server-side only)
 const loadApplications = (): CreditApplication[] => {
+  // Return empty array if running on client side
+  if (typeof window !== 'undefined' || !fs) {
+    return [];
+  }
+  
   try {
-    if (existsSync(STORE_FILE)) {
-      const data = readFileSync(STORE_FILE, 'utf-8').trim();
+    if (fs.existsSync(STORE_FILE)) {
+      const data = fs.readFileSync(STORE_FILE, 'utf-8').trim();
       
       // Handle empty file
       if (!data) {
@@ -81,11 +93,11 @@ const loadApplications = (): CreditApplication[] => {
   } catch (error) {
     console.error('Error loading applications:', error);
     // If file is corrupted, create a backup and start fresh
-    if (existsSync(STORE_FILE)) {
+    if (fs && fs.existsSync(STORE_FILE)) {
       try {
         const backupFile = STORE_FILE + '.backup.' + Date.now();
-        const data = readFileSync(STORE_FILE, 'utf-8');
-        writeFileSync(backupFile, data);
+        const data = fs.readFileSync(STORE_FILE, 'utf-8');
+        fs.writeFileSync(backupFile, data);
         console.log(`Corrupted applications file backed up to: ${backupFile}`);
       } catch (backupError) {
         console.error('Error creating backup:', backupError);
@@ -95,19 +107,24 @@ const loadApplications = (): CreditApplication[] => {
   return [];
 };
 
-// Save applications to file with better error handling and verification
+// Save applications to file with better error handling and verification (server-side only)
 const saveApplications = () => {
+  // Skip file operations on client side
+  if (typeof window !== 'undefined' || !fs) {
+    return;
+  }
+  
   try {
     // Ensure we always write a valid JSON array
     const dataToSave = Array.isArray(applications) ? applications : [];
     const jsonData = JSON.stringify(dataToSave, null, 2);
     
     // Write to file synchronously to ensure completion
-    writeFileSync(STORE_FILE, jsonData, 'utf-8');
+    fs.writeFileSync(STORE_FILE, jsonData, 'utf-8');
     console.log(`Saved ${dataToSave.length} applications to file`);
     
     // Verify the file was written correctly by reading it back
-    const verifyData = readFileSync(STORE_FILE, 'utf-8');
+    const verifyData = fs.readFileSync(STORE_FILE, 'utf-8');
     const parsedVerify = JSON.parse(verifyData);
     
     if (Array.isArray(parsedVerify) && parsedVerify.length === dataToSave.length) {
@@ -130,7 +147,8 @@ const ensureApplicationsLoaded = (forceReload = false) => {
   if (!isLoaded || forceReload) {
     applications = loadApplications();
     isLoaded = true;
-    console.log(`Loaded ${applications.length} applications from file`);
+    const source = typeof window !== 'undefined' ? 'memory (client-side)' : 'file (server-side)';
+    console.log(`Loaded ${applications.length} applications from ${source}`);
   }
 };
 
@@ -185,15 +203,20 @@ export const updateApplicationDocuments = (appId: number, documents: UploadedDoc
       saveApplications();
       console.log(`Successfully saved application ${appId} with new status`);
       
-      // Double-check by reloading and verifying the status was saved
-      const verification = loadApplications();
-      const verifyApp = verification.find(a => a.id === appId);
-      if (verifyApp && verifyApp.status === 'documents-uploaded') {
-        console.log(`✅ Verified: Application ${appId} status is correctly saved as ${verifyApp.status}`);
-        return true;
+      // Double-check by reloading and verifying the status was saved (server-side only)
+      if (typeof window === 'undefined' && fs) {
+        const verification = loadApplications();
+        const verifyApp = verification.find(a => a.id === appId);
+        if (verifyApp && verifyApp.status === 'documents-uploaded') {
+          console.log(`✅ Verified: Application ${appId} status is correctly saved as ${verifyApp.status}`);
+          return true;
+        } else {
+          console.error(`❌ Verification failed: Application ${appId} status not saved correctly`);
+          return false;
+        }
       } else {
-        console.error(`❌ Verification failed: Application ${appId} status not saved correctly`);
-        return false;
+        console.log(`✅ Application ${appId} updated successfully (client-side)`);
+        return true;
       }
     } catch (error) {
       console.error(`Error saving application ${appId}:`, error);
@@ -232,6 +255,34 @@ export const updateApplicationWithApproval = (appId: number, approvalTerms: Omit
     return true;
   }
   console.error(`Application with ID ${appId} not found for approval`);
+  return false;
+};
+
+// Update application status to contract-sent
+export const markContractSent = (appId: number): boolean => {
+  ensureApplicationsLoaded();
+  const app = applications.find(a => a.id === appId);
+  if (app) {
+    app.status = 'contract-sent';
+    saveApplications();
+    console.log(`Application ${appId} status updated to contract-sent`);
+    return true;
+  }
+  console.error(`Application with ID ${appId} not found for contract-sent update`);
+  return false;
+};
+
+// Update application status to contract-signed
+export const markContractSigned = (appId: number): boolean => {
+  ensureApplicationsLoaded();
+  const app = applications.find(a => a.id === appId);
+  if (app) {
+    app.status = 'contract-signed';
+    saveApplications();
+    console.log(`Application ${appId} status updated to contract-signed`);
+    return true;
+  }
+  console.error(`Application with ID ${appId} not found for contract-signed update`);
   return false;
 };
 

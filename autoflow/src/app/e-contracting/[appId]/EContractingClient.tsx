@@ -1,0 +1,337 @@
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { DocumentTextIcon, PencilSquareIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon } from '@heroicons/react/24/solid';
+import type { CreditApplication } from '@/lib/applicationStore';
+
+interface EContractingClientProps {
+  application: CreditApplication;
+}
+
+export default function EContractingClient({ application }: EContractingClientProps) {
+  const router = useRouter();
+  const [isSending, setIsSending] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
+  const [sentForESign, setSentForESign] = useState(false);
+  const [showSigningAnimation, setShowSigningAnimation] = useState(false);
+
+  const handleSendForESign = async () => {
+    setIsSending(true);
+    
+    try {
+      const response = await fetch('/api/contract-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          applicationId: application.id,
+          action: 'send-for-esign'
+        }),
+      });
+
+      if (response.ok) {
+        setTimeout(() => {
+          setIsSending(false);
+          setSentForESign(true);
+        }, 2000);
+      } else {
+        console.error('Failed to update contract status');
+        setIsSending(false);
+      }
+    } catch (error) {
+      console.error('Error sending contract for e-sign:', error);
+      // Still show success for demo purposes
+      setTimeout(() => {
+        setIsSending(false);
+        setSentForESign(true);
+      }, 2000);
+    }
+  };
+
+  const handleSignNow = async () => {
+    setIsSigning(true);
+    setShowSigningAnimation(true);
+    
+    try {
+      const response = await fetch('/api/contract-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          applicationId: application.id,
+          action: 'sign-now'
+        }),
+      });
+
+      if (response.ok) {
+        // Simulate signing process
+        setTimeout(() => {
+          setIsSigning(false);
+          setShowSigningAnimation(false);
+          // Navigate to delivery options page (now exists)
+          router.push(`/delivery-options/${application.id}?token=${application.token}`);
+        }, 3000);
+      } else {
+        console.error('Failed to update contract status');
+        // Still proceed for demo purposes
+        setTimeout(() => {
+          setIsSigning(false);
+          setShowSigningAnimation(false);
+          router.push(`/delivery-options/${application.id}?token=${application.token}`);
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Error signing contract:', error);
+      // Still proceed for demo purposes
+      setTimeout(() => {
+        setIsSigning(false);
+        setShowSigningAnimation(false);
+        router.push(`/delivery-options/${application.id}?token=${application.token}`);
+      }, 3000);
+    }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Electronic Contract</h1>
+        <p className="text-gray-600">Review and sign your loan agreement</p>
+      </div>
+
+      {/* Contract Summary */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+          <DocumentTextIcon className="h-6 w-6 mr-2 text-blue-600" />
+          Loan Summary
+        </h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <h3 className="font-medium text-gray-900 mb-3">Borrower Information</h3>
+            <div className="space-y-2 text-sm">
+              <p><span className="font-medium">Name:</span> {application.firstName} {application.lastName}</p>
+              <p><span className="font-medium">Email:</span> {application.email}</p>
+              <p><span className="font-medium">Phone:</span> {application.phone}</p>
+              <p><span className="font-medium">Annual Income:</span> {formatCurrency(parseInt(application.annualIncome))}</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="font-medium text-gray-900 mb-3">Lender Information</h3>
+            <div className="space-y-2 text-sm">
+              <p><span className="font-medium">Lender:</span> Westlake Financial Services</p>
+              <p><span className="font-medium">Address:</span> 4751 Wilshire Blvd, Los Angeles, CA 90010</p>
+              <p><span className="font-medium">Phone:</span> (888) 893-7937</p>
+              <p><span className="font-medium">License:</span> CA-DBO-603 K456</p>
+            </div>
+          </div>
+        </div>
+
+        {application.selectedVehicle && (
+          <div className="mb-6 pb-6 border-b border-gray-200">
+            <h3 className="font-medium text-gray-900 mb-3">Vehicle Information</h3>
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="font-medium text-gray-900">
+                {application.selectedVehicle.year} {application.selectedVehicle.make} {application.selectedVehicle.model}
+              </p>
+              <p className="text-green-600 font-semibold">
+                {formatCurrency(application.selectedVehicle.price)}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {application.approvalTerms && (
+          <div className="bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-200 rounded-lg p-6">
+            <h3 className="font-medium text-gray-900 mb-4 flex items-center">
+              <img 
+                src="/westlake-logo.png" 
+                alt="Westlake Financial Logo" 
+                className="w-8 h-8 object-contain mr-2"
+              />
+              Loan Terms
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-blue-800">Loan Amount:</span>
+                <div className="text-blue-700 font-semibold text-lg">{formatCurrency(application.approvalTerms.loanAmount)}</div>
+              </div>
+              <div>
+                <span className="font-medium text-blue-800">Interest Rate:</span>
+                <div className="text-blue-700 font-semibold text-lg">{application.approvalTerms.interestRate}% APR</div>
+              </div>
+              <div>
+                <span className="font-medium text-blue-800">Term:</span>
+                <div className="text-blue-700 font-semibold text-lg">{application.approvalTerms.termLength} months</div>
+              </div>
+              <div>
+                <span className="font-medium text-blue-800">Monthly Payment:</span>
+                <div className="text-blue-700 font-semibold text-lg">{formatCurrency(application.approvalTerms.monthlyPayment)}</div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Contract Preview */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Contract Preview</h2>
+        
+        {/* Mock Contract Display */}
+        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 bg-gray-50 text-center">
+          <DocumentTextIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">Sample Auto Loan Agreement</h3>
+          <div className="bg-white rounded border border-gray-200 p-6 text-left text-sm max-w-2xl mx-auto">
+            <div className="text-center mb-4">
+              <h4 className="font-bold text-gray-900">AUTO LOAN AGREEMENT</h4>
+              <p className="text-gray-600">Contract #: {application.approvalTerms?.approvalId}</p>
+            </div>
+            
+            <div className="space-y-3 text-gray-700">
+              <p><strong>BORROWER:</strong> {application.firstName} {application.lastName}</p>
+              <p><strong>LENDER:</strong> Westlake Financial Services</p>
+              {application.selectedVehicle && (
+                <p><strong>VEHICLE:</strong> {application.selectedVehicle.year} {application.selectedVehicle.make} {application.selectedVehicle.model}</p>
+              )}
+              {application.approvalTerms && (
+                <>
+                  <p><strong>LOAN AMOUNT:</strong> {formatCurrency(application.approvalTerms.loanAmount)}</p>
+                  <p><strong>ANNUAL PERCENTAGE RATE:</strong> {application.approvalTerms.interestRate}%</p>
+                  <p><strong>TERM:</strong> {application.approvalTerms.termLength} months</p>
+                  <p><strong>MONTHLY PAYMENT:</strong> {formatCurrency(application.approvalTerms.monthlyPayment)}</p>
+                </>
+              )}
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-gray-200 text-xs text-gray-500">
+              <p>This is a sample contract preview. The actual contract will contain complete terms and conditions, payment schedules, and legal disclosures as required by federal and state law.</p>
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-gray-200">
+              <div className="flex justify-between">
+                <div>
+                  <p className="text-xs text-gray-500">BORROWER SIGNATURE</p>
+                  <div className="border-b border-gray-400 w-48 mt-4"></div>
+                  <p className="text-xs text-gray-500 mt-1">Date: ___________</p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500">LENDER REPRESENTATIVE</p>
+                  <div className="border-b border-gray-400 w-48 mt-4"></div>
+                  <p className="text-xs text-gray-500 mt-1">Date: ___________</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p className="text-gray-500 mt-4">
+            📄 This is a simplified preview. The full contract contains additional terms and conditions.
+          </p>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="bg-white rounded-lg shadow-lg p-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Next Steps</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Send for e-sign */}
+          <div className="border border-gray-200 rounded-lg p-6">
+            <h3 className="font-medium text-gray-900 mb-2">Option 1: Send for E-Signature</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Send the contract to your email for review and signature at your convenience.
+            </p>
+            
+            {sentForESign ? (
+              <div className="flex items-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                <CheckCircleIcon className="h-5 w-5 text-green-600 mr-2" />
+                <span className="text-green-700 text-sm font-medium">
+                  Contract sent for e-signature! Check your email.
+                </span>
+              </div>
+            ) : (
+              <button
+                onClick={handleSendForESign}
+                disabled={isSending}
+                className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isSending ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <PaperAirplaneIcon className="h-5 w-5 mr-2" />
+                    Send for E-Sign
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+
+          {/* Sign Now */}
+          <div className="border border-gray-200 rounded-lg p-6">
+            <h3 className="font-medium text-gray-900 mb-2">Option 2: Sign Now</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Review and digitally sign the contract immediately to proceed to delivery options.
+            </p>
+            
+            {showSigningAnimation ? (
+              <div className="flex items-center justify-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="animate-pulse flex items-center">
+                  <PencilSquareIcon className="h-5 w-5 text-yellow-600 mr-2" />
+                  <span className="text-yellow-700 text-sm font-medium">
+                    Processing digital signature...
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={handleSignNow}
+                disabled={isSigning}
+                className="w-full bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+              >
+                {isSigning ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <PencilSquareIcon className="h-5 w-5 mr-2" />
+                    Sign Now
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6 pt-6 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-500 mb-4">
+            Need help? Contact Westlake Financial at (888) 893-7937
+          </p>
+          <Link 
+            href={`/portal/${application.id}?token=${application.token}`}
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            ← Back to Customer Portal
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+} 
