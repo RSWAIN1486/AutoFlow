@@ -47,10 +47,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Update status to awaiting-delivery
+    const { updateApplicationStatus } = await import('@/lib/applicationStore');
+    const statusUpdated = updateApplicationStatus(applicationId, 'awaiting-delivery');
+
+    if (!statusUpdated) {
+      console.warn(`Failed to update status for application ${applicationId}`);
+    }
+
     return NextResponse.json({
       success: true,
       message: `Delivery choice updated to ${deliveryChoice}`,
-      deliveryChoice
+      deliveryChoice,
+      status: 'awaiting-delivery'
     });
 
   } catch (error) {

@@ -46,6 +46,8 @@ export default function CustomerPortal() {
         return 'bg-orange-100 text-orange-800';
       case 'contract-signed':
         return 'bg-emerald-100 text-emerald-800';
+      case 'awaiting-delivery':
+        return 'bg-teal-100 text-teal-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
       default:
@@ -67,6 +69,8 @@ export default function CustomerPortal() {
         return 'E-Sign Pending';
       case 'contract-signed':
         return 'Contract Signed';
+      case 'awaiting-delivery':
+        return 'Awaiting Delivery';
       case 'rejected':
         return 'Not Approved';
       default:
@@ -232,6 +236,21 @@ export default function CustomerPortal() {
                     </div>
                     <div className="text-sm text-emerald-700">
                       <p>Your loan contract has been signed. Next step is to arrange vehicle delivery.</p>
+                    </div>
+                  </div>
+                )}
+
+                {searchResult.status === 'awaiting-delivery' && (
+                  <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="text-teal-600 text-lg">🚚</div>
+                      <div className="ml-3">
+                        <h4 className="font-semibold text-teal-800">Delivery Arranged!</h4>
+                        <p className="text-sm text-teal-600">Your vehicle delivery has been scheduled</p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-teal-700">
+                      <p>Your delivery options have been confirmed. Our team will contact you with final delivery details.</p>
                     </div>
                   </div>
                 )}

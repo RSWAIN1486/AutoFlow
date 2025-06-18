@@ -35,7 +35,7 @@ export interface CreditApplication {
   submittedAt: Date;
   token: string;
   uploadedDocuments?: UploadedDocument[];
-  status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected' | 'contract-sent' | 'contract-signed';
+  status: 'submitted' | 'documents-pending' | 'documents-uploaded' | 'under-review' | 'approved' | 'rejected' | 'contract-sent' | 'contract-signed' | 'awaiting-delivery';
   approvalTerms?: ApprovalTerms;
   deliveryChoice?: 'pickup' | 'home-delivery';
   deliveryDetails?: {
