@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { DocumentTextIcon, PencilSquareIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, PencilSquareIcon, PaperAirplaneIcon, TruckIcon } from '@heroicons/react/24/outline';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import type { CreditApplication } from '@/lib/applicationStore';
 
@@ -13,44 +13,8 @@ interface EContractingClientProps {
 
 export default function EContractingClient({ application }: EContractingClientProps) {
   const router = useRouter();
-  const [isSending, setIsSending] = useState(false);
   const [isSigning, setIsSigning] = useState(false);
-  const [sentForESign, setSentForESign] = useState(false);
   const [showSigningAnimation, setShowSigningAnimation] = useState(false);
-
-  const handleSendForESign = async () => {
-    setIsSending(true);
-    
-    try {
-      const response = await fetch('/api/contract-status', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          applicationId: application.id,
-          action: 'send-contract'
-        }),
-      });
-
-      if (response.ok) {
-        setTimeout(() => {
-          setIsSending(false);
-          setSentForESign(true);
-        }, 2000);
-      } else {
-        console.error('Failed to update contract status');
-        setIsSending(false);
-      }
-    } catch (error) {
-      console.error('Error sending contract for e-sign:', error);
-      // Still show success for demo purposes
-      setTimeout(() => {
-        setIsSending(false);
-        setSentForESign(true);
-      }, 2000);
-    }
-  };
 
   const handleSignNow = async () => {
     setIsSigning(true);
@@ -256,81 +220,94 @@ export default function EContractingClient({ application }: EContractingClientPr
 
       {/* Action Buttons */}
       <div className="bg-white rounded-lg shadow-lg p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Next Steps</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Contract Status & Next Steps</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Send for e-sign */}
-          <div className="border border-gray-200 rounded-lg p-6">
-            <h3 className="font-medium text-gray-900 mb-2">Option 1: Send for E-Signature</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Send the contract to your email for review and signature at your convenience.
-            </p>
-            
-            {sentForESign ? (
-              <div className="flex items-center p-3 bg-green-50 border border-green-200 rounded-lg">
-                <CheckCircleIcon className="h-5 w-5 text-green-600 mr-2" />
-                <span className="text-green-700 text-sm font-medium">
-                  Contract sent for e-signature! Check your email.
-                </span>
+        {/* Contract Already Signed */}
+        {application.status === 'contract-signed' && (
+          <div className="text-center">
+            <div className="flex items-center justify-center p-6 bg-green-50 border border-green-200 rounded-lg mb-6">
+              <CheckCircleIcon className="h-8 w-8 text-green-600 mr-3" />
+              <div>
+                <h3 className="text-lg font-semibold text-green-800">Contract Signed Successfully!</h3>
+                <p className="text-green-700">Your loan contract has been signed. Moving to delivery options...</p>
               </div>
-            ) : (
-              <button
-                onClick={handleSendForESign}
-                disabled={isSending}
-                className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isSending ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <PaperAirplaneIcon className="h-5 w-5 mr-2" />
-                    Send for E-Sign
-                  </>
-                )}
-              </button>
-            )}
+            </div>
+            
+            <Link 
+              href={`/delivery-options/${application.id}?token=${application.token}`}
+              className="inline-flex items-center bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+            >
+              <TruckIcon className="h-5 w-5 mr-2" />
+              Continue to Delivery Options
+            </Link>
           </div>
+        )}
 
-          {/* Sign Now */}
-          <div className="border border-gray-200 rounded-lg p-6">
-            <h3 className="font-medium text-gray-900 mb-2">Option 2: Sign Now</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Review and digitally sign the contract immediately to proceed to delivery options.
-            </p>
-            
-            {showSigningAnimation ? (
-              <div className="flex items-center justify-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <div className="animate-pulse flex items-center">
-                  <PencilSquareIcon className="h-5 w-5 text-yellow-600 mr-2" />
-                  <span className="text-yellow-700 text-sm font-medium">
-                    Processing digital signature...
-                  </span>
-                </div>
+        {/* Contract Sent for Signature */}
+        {application.status === 'contract-sent' && (
+          <div className="space-y-6">
+            <div className="flex items-center p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <PaperAirplaneIcon className="h-6 w-6 text-blue-600 mr-3" />
+              <div>
+                <h3 className="font-medium text-blue-800">Contract Sent for E-Signature</h3>
+                <p className="text-blue-700 text-sm">Ready for your digital signature</p>
               </div>
-            ) : (
-              <button
-                onClick={handleSignNow}
-                disabled={isSigning}
-                className="w-full bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-              >
-                {isSigning ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <PencilSquareIcon className="h-5 w-5 mr-2" />
-                    Sign Now
-                  </>
-                )}
-              </button>
-            )}
+            </div>
+
+            <div className="border border-gray-200 rounded-lg p-6">
+              <h3 className="font-medium text-gray-900 mb-2">Sign Your Contract</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Review and digitally sign the contract to proceed to delivery options.
+              </p>
+              
+              {showSigningAnimation ? (
+                <div className="flex items-center justify-center p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="animate-pulse flex items-center">
+                    <PencilSquareIcon className="h-5 w-5 text-yellow-600 mr-2" />
+                    <span className="text-yellow-700 text-sm font-medium">
+                      Processing digital signature...
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  onClick={handleSignNow}
+                  disabled={isSigning}
+                  className="w-full bg-green-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isSigning ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <PencilSquareIcon className="h-5 w-5 mr-2" />
+                      Sign Now
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Contract Approved - Waiting for Admin to Send */}
+        {application.status === 'approved' && (
+          <div className="text-center">
+            <div className="flex items-center justify-center p-6 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+              <PaperAirplaneIcon className="h-8 w-8 text-blue-600 mr-3" />
+              <div>
+                <h3 className="text-lg font-semibold text-blue-800">Contract Ready</h3>
+                <p className="text-blue-700">Your loan has been approved! An admin will send the contract for your signature shortly.</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-600 text-sm">
+              You will receive an email notification when the contract is ready for signing.
+            </p>
+          </div>
+        )}
 
         <div className="mt-6 pt-6 border-t border-gray-200 text-center">
           <p className="text-sm text-gray-500 mb-4">

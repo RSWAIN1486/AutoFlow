@@ -25,8 +25,8 @@ async function EContractingContent({ appId, token }: { appId: string; token?: st
     );
   }
 
-  // Check if application is approved
-  if (application.status !== 'approved' || !application.approvalTerms) {
+  // Check if application is ready for e-contracting
+  if (!['approved', 'contract-sent', 'contract-signed'].includes(application.status) || !application.approvalTerms) {
     return (
       <div className="max-w-4xl mx-auto text-center">
         <div className="bg-white rounded-lg shadow-lg p-8">

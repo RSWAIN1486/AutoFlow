@@ -176,7 +176,7 @@ export const addApplication = (appData: Omit<CreditApplication, 'id' | 'submitte
 };
 
 export const getApplication = (id: number): CreditApplication | undefined => {
-  ensureApplicationsLoaded();
+  ensureApplicationsLoaded(true); // Force reload to get fresh data
   return applications.find(app => app.id === id);
 };
 
