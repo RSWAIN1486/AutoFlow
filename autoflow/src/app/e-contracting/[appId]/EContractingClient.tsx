@@ -29,7 +29,7 @@ export default function EContractingClient({ application }: EContractingClientPr
         },
         body: JSON.stringify({
           applicationId: application.id,
-          action: 'send-for-esign'
+          action: 'send-contract'
         }),
       });
 
@@ -64,7 +64,7 @@ export default function EContractingClient({ application }: EContractingClientPr
         },
         body: JSON.stringify({
           applicationId: application.id,
-          action: 'sign-now'
+          action: 'sign-contract'
         }),
       });
 
@@ -120,23 +120,35 @@ export default function EContractingClient({ application }: EContractingClientPr
         </h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <h3 className="font-medium text-gray-900 mb-3">Borrower Information</h3>
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <h3 className="font-medium text-gray-900 mb-3 flex items-center">
+              <svg className="h-5 w-5 mr-2 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              </svg>
+              Borrower Information
+            </h3>
             <div className="space-y-2 text-sm">
-              <p><span className="font-medium">Name:</span> {application.firstName} {application.lastName}</p>
-              <p><span className="font-medium">Email:</span> {application.email}</p>
-              <p><span className="font-medium">Phone:</span> {application.phone}</p>
-              <p><span className="font-medium">Annual Income:</span> {formatCurrency(parseInt(application.annualIncome))}</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Name:</span> {application.firstName} {application.lastName}</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Email:</span> {application.email}</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Phone:</span> {application.phone}</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Annual Income:</span> {formatCurrency(parseInt(application.annualIncome))}</p>
             </div>
           </div>
 
-          <div>
-            <h3 className="font-medium text-gray-900 mb-3">Lender Information</h3>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="font-medium text-gray-900 mb-3 flex items-center">
+              <img 
+                src="/westlake-logo.png" 
+                alt="Westlake Financial Logo" 
+                className="w-5 h-5 object-contain mr-2"
+              />
+              Lender Information
+            </h3>
             <div className="space-y-2 text-sm">
-              <p><span className="font-medium">Lender:</span> Westlake Financial Services</p>
-              <p><span className="font-medium">Address:</span> 4751 Wilshire Blvd, Los Angeles, CA 90010</p>
-              <p><span className="font-medium">Phone:</span> (888) 893-7937</p>
-              <p><span className="font-medium">License:</span> CA-DBO-603 K456</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Lender:</span> Westlake Financial Services</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Address:</span> 4751 Wilshire Blvd, Los Angeles, CA 90010</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">Phone:</span> (888) 893-7937</p>
+              <p className="text-gray-800"><span className="font-semibold text-gray-900">License:</span> CA-DBO-603 K456</p>
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { markContractSent, markContractSigned } from '@/lib/applicationStore';
+import { markContractSent, markContractSigned, getApplication } from '@/lib/applicationStore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,43 +12,65 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let success = false;
-    let message = '';
-
-    switch (action) {
-      case 'send-for-esign':
-        success = markContractSent(applicationId);
-        message = success ? 'Contract sent for e-signature' : 'Failed to update contract status';
-        break;
-      
-      case 'sign-now':
-        success = markContractSigned(applicationId);
-        message = success ? 'Contract signed successfully' : 'Failed to update contract status';
-        break;
-      
-      default:
-        return NextResponse.json(
-          { error: 'Invalid action. Use "send-for-esign" or "sign-now"' },
-          { status: 400 }
-        );
-    }
-
-    if (success) {
-      return NextResponse.json({
-        success: true,
-        message,
-        applicationId,
-        action
-      });
-    } else {
+    // Verify application exists
+    const application = getApplication(applicationId);
+    if (!application) {
       return NextResponse.json(
-        { error: message },
+        { error: 'Application not found' },
         { status: 404 }
       );
     }
 
+    let success = false;
+    let message = '';
+
+    switch (action) {
+      case 'send-contract':
+        // Admin action: Mark contract as sent to customer
+        if (application.status !== 'approved') {
+          return NextResponse.json(
+            { error: 'Application must be approved before sending contract' },
+            { status: 400 }
+          );
+        }
+        success = markContractSent(applicationId);
+        message = success ? 'Contract sent to customer for e-signature' : 'Failed to send contract';
+        break;
+
+      case 'sign-contract':
+        // Customer action: Mark contract as signed
+        if (application.status !== 'contract-sent') {
+          return NextResponse.json(
+            { error: 'Contract must be sent before it can be signed' },
+            { status: 400 }
+          );
+        }
+        success = markContractSigned(applicationId);
+        message = success ? 'Contract signed successfully' : 'Failed to sign contract';
+        break;
+
+      default:
+        return NextResponse.json(
+          { error: 'Invalid action. Use "send-contract" or "sign-contract"' },
+          { status: 400 }
+        );
+    }
+
+    if (!success) {
+      return NextResponse.json(
+        { error: message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message,
+      status: action === 'send-contract' ? 'contract-sent' : 'contract-signed'
+    });
+
   } catch (error) {
-    console.error('Error updating contract status:', error);
+    console.error('Contract status update error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

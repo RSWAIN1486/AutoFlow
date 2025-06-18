@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { DocumentArrowUpIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
 
 // Define the App type for the application object
 interface App {
@@ -251,6 +252,15 @@ export default function UploadDocumentsClient({ app }: UploadDocumentsClientProp
             Please upload all required documents to continue (Trade-in info is optional)
           </p>
         )}
+        
+        <div className="text-center mt-4 pt-4 border-t border-gray-200">
+          <Link 
+            href="/"
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+          >
+            ← Return to Home
+          </Link>
+        </div>
       </div>
     </div>
   );

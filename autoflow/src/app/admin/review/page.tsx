@@ -1,8 +1,9 @@
-import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
-import { DocumentTextIcon, CheckCircleIcon, ClockIcon, ExclamationTriangleIcon, HomeIcon } from '@heroicons/react/24/outline';
+import { getAllApplications } from '@/lib/applicationStore';
+import { DocumentTextIcon, HomeIcon } from '@heroicons/react/24/outline';
 import ApprovalButton from './ApprovalButton';
 import RefreshButton from './RefreshButton';
+import SendContractButton from './SendContractButton';
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -18,17 +19,17 @@ export default function AdminReviewPage() {
       case 'documents-pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'documents-uploaded':
-        return 'bg-green-100 text-green-800';
+        return 'bg-indigo-100 text-indigo-800';
       case 'under-review':
         return 'bg-purple-100 text-purple-800';
       case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'contract-sent':
+        return 'bg-orange-100 text-orange-800';
+      case 'contract-signed':
         return 'bg-emerald-100 text-emerald-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
-      case 'contract-sent':
-        return 'bg-cyan-100 text-cyan-800';
-      case 'contract-signed':
-        return 'bg-indigo-100 text-indigo-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -36,38 +37,35 @@ export default function AdminReviewPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
+      case 'submitted':
+        return '📝';
+      case 'documents-pending':
+        return '📄';
       case 'documents-uploaded':
-      case 'approved':
-        return <CheckCircleIcon className="h-5 w-5" />;
+        return '📋';
       case 'under-review':
-        return <ClockIcon className="h-5 w-5" />;
-      case 'rejected':
-        return <ExclamationTriangleIcon className="h-5 w-5" />;
+        return '🔍';
+      case 'approved':
+        return '✅';
       case 'contract-sent':
-        return (
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 7.89a2 2 0 002.83 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        );
+        return '📤';
       case 'contract-signed':
-        return (
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
-        );
+        return '✍️';
+      case 'rejected':
+        return '❌';
       default:
-        return <DocumentTextIcon className="h-5 w-5" />;
+        return '⏳';
     }
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString('en-US', {
+    return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
       hour: '2-digit',
       minute: '2-digit'
-    });
+    }).format(date);
   };
 
   return (
@@ -252,13 +250,15 @@ export default function AdminReviewPage() {
                         View Portal
                       </Link>
                       {app.status === 'approved' && app.approvalTerms ? (
-                        <Link
-                          href={`/e-contracting/${app.id}`}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
-                        >
-                          <DocumentTextIcon className="h-4 w-4" />
-                          Send for E-Contracting
-                        </Link>
+                        <SendContractButton applicationId={app.id} />
+                      ) : app.status === 'contract-sent' ? (
+                        <div className="bg-orange-100 text-orange-800 px-4 py-2 rounded-md text-sm font-medium">
+                          📤 E-Contract Sent - Awaiting Customer Signature
+                        </div>
+                      ) : app.status === 'contract-signed' ? (
+                        <div className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-md text-sm font-medium">
+                          ✍️ Contract Signed - Ready for Delivery
+                        </div>
                       ) : (
                         <ApprovalButton applicationId={app.id} status={app.status} />
                       )}

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { DocumentTextIcon, CheckCircleIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, ArrowUpTrayIcon, EyeIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, MagnifyingGlassIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 
 interface ApplicationData {
   id: number;
@@ -31,6 +31,48 @@ export default function CustomerPortal() {
   const [isSearching, setIsSearching] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const getStatusDisplayColor = (status: string) => {
+    switch (status) {
+      case 'documents-pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'documents-uploaded':
+        return 'bg-blue-100 text-blue-800';
+      case 'under-review':
+        return 'bg-purple-100 text-purple-800';
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'contract-sent':
+        return 'bg-orange-100 text-orange-800';
+      case 'contract-signed':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusDisplayText = (status: string) => {
+    switch (status) {
+      case 'documents-pending':
+        return 'Documents Pending';
+      case 'documents-uploaded':
+        return 'Under Review';
+      case 'under-review':
+        return 'Under Review';
+      case 'approved':
+        return 'Approved';
+      case 'contract-sent':
+        return 'E-Sign Pending';
+      case 'contract-signed':
+        return 'Contract Signed';
+      case 'rejected':
+        return 'Not Approved';
+      default:
+        return 'In Process';
+    }
+  };
 
   const handleSearch = async () => {
     if (!applicationId.trim()) return;
@@ -65,91 +107,7 @@ export default function CustomerPortal() {
     }
   };
 
-  const getStatusMessage = (status: string) => {
-    switch (status) {
-      case 'submitted':
-      case 'documents-pending':
-        return 'Please upload your required documents to continue.';
-      case 'documents-uploaded':
-        return 'Your documents have been received and are being reviewed.';
-      case 'under-review':
-        return 'Your application is currently under review.';
-      case 'approved':
-        return 'Congratulations! Your application has been approved.';
-      case 'contract-sent':
-        return 'Your contract has been sent for e-signing.';
-      case 'contract-signed':
-        return 'Your contract has been signed successfully.';
-      default:
-        return 'Please check your application status.';
-    }
-  };
 
-  const getNextAction = (status: string, searchResult: ApplicationData) => {
-    switch (status) {
-      case 'submitted':
-      case 'documents-pending':
-        return (
-          <Link
-            href={`/upload-documents/${searchResult.id}?token=${searchResult.token}`}
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-          >
-            <ArrowUpTrayIcon className="h-5 w-5" />
-            Upload Documents
-          </Link>
-        );
-      case 'documents-uploaded':
-      case 'under-review':
-        return (
-          <Link
-            href={`/portal/${searchResult.id}?token=${searchResult.token}`}
-            className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-          >
-            <EyeIcon className="h-5 w-5" />
-            View Application Status
-          </Link>
-        );
-      case 'approved':
-        return (
-          <Link
-            href={`/e-contracting/${searchResult.id}`}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-          >
-            <DocumentTextIcon className="h-5 w-5" />
-            Continue to E-Contracting
-          </Link>
-        );
-      case 'contract-sent':
-        return (
-          <Link
-            href={`/e-contracting/${searchResult.id}`}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-          >
-            <DocumentTextIcon className="h-5 w-5" />
-            Sign Your Contract
-          </Link>
-        );
-      case 'contract-signed':
-        return (
-          <Link
-            href={`/delivery-options/${searchResult.id}`}
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-          >
-            <DocumentTextIcon className="h-5 w-5" />
-            Choose Delivery Options
-          </Link>
-        );
-      default:
-        return (
-          <Link
-            href={`/portal/${searchResult.id}?token=${searchResult.token}`}
-            className="text-blue-400 hover:text-blue-300 underline"
-          >
-            View Application Portal
-          </Link>
-        );
-    }
-  };
 
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
@@ -196,51 +154,130 @@ export default function CustomerPortal() {
             className="text-center"
           >
             {searchResult ? (
-              <div className="bg-green-500/20 border border-green-500/30 rounded-lg p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <CheckCircleIcon className="h-8 w-8 text-green-400 mr-2" />
-                  <h4 className="text-xl font-semibold text-white">
-                    Application Found!
-                  </h4>
+              <div className="bg-slate-600 rounded-xl p-6 mb-6">
+                <div className="flex items-center mb-3">
+                  <CheckCircleIcon className="h-8 w-8 text-green-400 mr-3" />
+                  <h3 className="text-lg font-semibold text-white">Application Found!</h3>
                 </div>
                 
-                <div className="text-gray-300 mb-4">
-                  <p><strong>Name:</strong> {searchResult.firstName} {searchResult.lastName}</p>
-                  <p><strong>Status:</strong> <span className="capitalize">{searchResult.status.replace('-', ' ')}</span></p>
+                <div className="space-y-2 text-sm text-slate-200 mb-4">
+                  <p><span className="font-semibold text-white">Name:</span> {searchResult.firstName} {searchResult.lastName}</p>
+                  <p><span className="font-semibold text-white">Status:</span> 
+                    <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${getStatusDisplayColor(searchResult.status)}`}>
+                      {getStatusDisplayText(searchResult.status)}
+                    </span>
+                  </p>
                   {searchResult.selectedVehicle && (
-                    <p><strong>Vehicle:</strong> {searchResult.selectedVehicle.year} {searchResult.selectedVehicle.make} {searchResult.selectedVehicle.model}</p>
+                    <p><span className="font-semibold text-white">Vehicle:</span> {searchResult.selectedVehicle.year} {searchResult.selectedVehicle.make} {searchResult.selectedVehicle.model}</p>
                   )}
                 </div>
 
-                {searchResult.status === 'approved' && searchResult.approvalTerms ? (
-                  <div className="space-y-3">
-                    <div className="bg-blue-500/20 border border-blue-500/30 rounded-lg p-4">
-                      <h5 className="text-green-400 font-semibold mb-2">🎉 Congratulations! Your loan is approved!</h5>
-                      <div className="text-sm text-gray-300 grid grid-cols-2 gap-2">
-                        <div>Loan Amount: <strong>${searchResult.approvalTerms.loanAmount.toLocaleString()}</strong></div>
-                        <div>Monthly Payment: <strong>${searchResult.approvalTerms.monthlyPayment.toLocaleString()}</strong></div>
-                        <div>Interest Rate: <strong>{searchResult.approvalTerms.interestRate}% APR</strong></div>
-                        <div>Term: <strong>{searchResult.approvalTerms.termLength} months</strong></div>
+                {searchResult.status === 'approved' && searchResult.approvalTerms && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="text-green-600 text-lg">🎉</div>
+                      <div className="ml-3">
+                        <h4 className="font-semibold text-blue-800">Congratulations! Your loan is approved!</h4>
+                        <p className="text-sm text-blue-600">Approved by Westlake Financial</p>
                       </div>
                     </div>
-                    
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {getNextAction(searchResult.status, searchResult)}
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
-                    <p className="text-yellow-300 mb-4">
-                      {getStatusMessage(searchResult.status)}
-                    </p>
-                    <div className="mt-3">
-                      {getNextAction(searchResult.status, searchResult)}
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                      <div>
+                        <span className="font-medium text-blue-800">Loan Amount:</span>
+                        <div className="text-blue-700 font-semibold">${searchResult.approvalTerms.loanAmount.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-blue-800">Monthly Payment:</span>
+                        <div className="text-blue-700 font-semibold">${searchResult.approvalTerms.monthlyPayment.toLocaleString()}</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-blue-800">Interest Rate:</span>
+                        <div className="text-blue-700 font-semibold">{searchResult.approvalTerms.interestRate}% APR</div>
+                      </div>
+                      <div>
+                        <span className="font-medium text-blue-800">Term:</span>
+                        <div className="text-blue-700 font-semibold">{searchResult.approvalTerms.termLength} months</div>
+                      </div>
+                    </div>
+                    <div className="text-sm text-blue-600 bg-blue-100 rounded p-3">
+                      <p><strong>Next Step:</strong> Please wait for our team to prepare your e-contracting documents. You will be notified when they are ready for your signature.</p>
+                      <p className="mt-1 text-xs">Expected timeline: 1-2 business hours</p>
                     </div>
                   </div>
                 )}
+
+                {searchResult.status === 'contract-sent' && (
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="text-orange-600 text-lg">📤</div>
+                      <div className="ml-3">
+                        <h4 className="font-semibold text-orange-800">E-Contract Ready for Signature!</h4>
+                        <p className="text-sm text-orange-600">Your loan documents are ready to be signed</p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-orange-700">
+                      <p>Your e-contracting documents have been prepared and are ready for your digital signature.</p>
+                    </div>
+                  </div>
+                )}
+
+                {searchResult.status === 'contract-signed' && (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center mb-3">
+                      <div className="text-emerald-600 text-lg">✍️</div>
+                      <div className="ml-3">
+                        <h4 className="font-semibold text-emerald-800">Contract Signed Successfully!</h4>
+                        <p className="text-sm text-emerald-600">Moving to delivery options</p>
+                      </div>
+                    </div>
+                    <div className="text-sm text-emerald-700">
+                      <p>Your loan contract has been signed. Next step is to arrange vehicle delivery.</p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-3">
+                  {searchResult.status === 'documents-pending' && (
+                    <Link
+                      href={`/upload-documents/${searchResult.id}?token=${searchResult.token}`}
+                      className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                    >
+                      📄 Continue - Upload Documents
+                    </Link>
+                  )}
+
+                  {searchResult.status === 'documents-uploaded' && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
+                      <p className="text-yellow-800 font-medium">Documents Uploaded Successfully</p>
+                      <p className="text-yellow-600 text-sm">Under review by our lenders</p>
+                    </div>
+                  )}
+
+                  {searchResult.status === 'under-review' && (
+                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
+                      <p className="text-purple-800 font-medium">Application Under Review</p>
+                      <p className="text-purple-600 text-sm">We will notify you once approved</p>
+                    </div>
+                  )}
+
+                  {searchResult.status === 'contract-sent' && (
+                    <Link
+                      href={`/e-contracting/${searchResult.id}`}
+                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                    >
+                      ✍️ Continue to E-Contracting
+                    </Link>
+                  )}
+
+                  {searchResult.status === 'contract-signed' && (
+                    <Link
+                      href={`/delivery-options/${searchResult.id}`}
+                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                    >
+                      🚚 Continue to Delivery Options
+                    </Link>
+                  )}
+                </div>
               </div>
             ) : (
               <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-6">
@@ -264,7 +301,7 @@ export default function CustomerPortal() {
 
       <div className="mt-8 pt-6 border-t border-white/20 text-center">
         <p className="text-sm text-gray-400 mb-2">
-          Don't have an application yet?
+          Do not have an application yet?
         </p>
         <Link
           href="/apply"
