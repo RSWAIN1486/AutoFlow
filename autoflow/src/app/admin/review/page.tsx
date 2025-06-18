@@ -28,6 +28,8 @@ export default function AdminReviewPage() {
         return 'bg-orange-100 text-orange-800';
       case 'contract-signed':
         return 'bg-emerald-100 text-emerald-800';
+      case 'awaiting-delivery':
+        return 'bg-teal-100 text-teal-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
       default:
@@ -51,6 +53,8 @@ export default function AdminReviewPage() {
         return '📤';
       case 'contract-signed':
         return '✍️';
+      case 'awaiting-delivery':
+        return '🚚';
       case 'rejected':
         return '❌';
       default:
@@ -238,6 +242,151 @@ export default function AdminReviewPage() {
                     </div>
                   )}
 
+                  {/* E-Contracting Details */}
+                  {(app.status === 'contract-sent' || app.status === 'contract-signed' || app.status === 'awaiting-delivery') && (
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">E-Contracting Details</h4>
+                      <div className="bg-gradient-to-r from-orange-50 to-emerald-50 border border-orange-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
+                              <span className="text-orange-600 font-bold text-sm">📄</span>
+                            </div>
+                            <div>
+                              <div className="font-medium text-orange-800">Contract Status</div>
+                              <div className="text-xs text-orange-600">Electronic Signature Process</div>
+                            </div>
+                          </div>
+                          <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                            app.status === 'contract-sent' 
+                              ? 'bg-orange-100 text-orange-800' 
+                              : 'bg-emerald-100 text-emerald-800'
+                          }`}>
+                            {app.status === 'contract-sent' ? '📤 Sent for Signature' : '✍️ Signed'}
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="font-medium text-orange-800">Contract Type:</span>
+                            <div className="text-orange-700">Auto Loan Agreement</div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-orange-800">E-Sign Platform:</span>
+                            <div className="text-orange-700">DocuSign Integration</div>
+                          </div>
+                          {app.status !== 'contract-sent' && (
+                            <>
+                              <div>
+                                <span className="font-medium text-orange-800">Signed Date:</span>
+                                <div className="text-orange-700">
+                                  {formatDate(new Date())} {/* This would be actual signing date in real app */}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="font-medium text-orange-800">IP Address:</span>
+                                <div className="text-orange-700">192.168.1.100</div>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="mt-3 pt-3 border-t border-orange-200">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="text-orange-600">
+                              <span className="font-medium">Contract ID:</span> CTR-{app.id}-{new Date().getFullYear()}
+                            </div>
+                            <Link
+                              href={`/e-contracting/${app.id}`}
+                              className="text-orange-600 hover:text-orange-800 font-medium"
+                            >
+                              View Contract →
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Delivery Details */}
+                  {app.status === 'awaiting-delivery' && app.deliveryChoice && (
+                    <div className="mb-6">
+                      <h4 className="text-sm font-medium text-gray-900 mb-3">Delivery Details</h4>
+                      <div className="bg-gradient-to-r from-teal-50 to-blue-50 border border-teal-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center">
+                              <span className="text-teal-600 font-bold text-sm">🚚</span>
+                            </div>
+                            <div>
+                              <div className="font-medium text-teal-800">
+                                {app.deliveryChoice === 'pickup' ? 'Vehicle Pickup' : 'Home Delivery'}
+                              </div>
+                              <div className="text-xs text-teal-600">Customer Selected Option</div>
+                            </div>
+                          </div>
+                          <div className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-xs font-medium">
+                            🚚 Delivery Scheduled
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm mb-3">
+                          {app.deliveryDetails?.scheduledDate && (
+                            <div>
+                              <span className="font-medium text-teal-800">Scheduled Date:</span>
+                              <div className="text-teal-700">
+                                {new Date(app.deliveryDetails.scheduledDate).toLocaleDateString('en-US', { 
+                                  weekday: 'long', 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })}
+                              </div>
+                            </div>
+                          )}
+                          {app.deliveryDetails?.scheduledTime && (
+                            <div>
+                              <span className="font-medium text-teal-800">Scheduled Time:</span>
+                              <div className="text-teal-700">{app.deliveryDetails.scheduledTime}</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {app.deliveryChoice === 'pickup' && (
+                          <div className="bg-teal-100 rounded-lg p-3 mb-3">
+                            <div className="font-medium text-teal-800 mb-2">Pickup Location</div>
+                            <div className="text-sm text-teal-700 space-y-1">
+                              <div><strong>AutoFlow Dealership</strong></div>
+                              <div>456 Auto Drive, Los Angeles, CA 90028</div>
+                              <div>📞 (555) 123-4567</div>
+                              <div>🕒 Mon-Sat: 9AM-8PM, Sun: 10AM-6PM</div>
+                            </div>
+                          </div>
+                        )}
+
+                        {app.deliveryChoice === 'home-delivery' && app.deliveryDetails?.deliveryAddress && (
+                          <div className="bg-teal-100 rounded-lg p-3 mb-3">
+                            <div className="font-medium text-teal-800 mb-2">Delivery Address</div>
+                            <div className="text-sm text-teal-700 whitespace-pre-line">
+                              {app.deliveryDetails.deliveryAddress}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="pt-3 border-t border-teal-200">
+                          <div className="flex items-center justify-between text-xs">
+                            <div className="text-teal-600">
+                              <span className="font-medium">Delivery ID:</span> DEL-{app.id}-{new Date().getFullYear()}
+                            </div>
+                            <div className="text-teal-600">
+                              <span className="font-medium">Status:</span> Preparation in Progress
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                     <div className="text-sm text-gray-500">
                       Submitted: {formatDate(app.submittedAt)}
@@ -258,6 +407,10 @@ export default function AdminReviewPage() {
                       ) : app.status === 'contract-signed' ? (
                         <div className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-md text-sm font-medium">
                           ✍️ Contract Signed - Ready for Delivery
+                        </div>
+                      ) : app.status === 'awaiting-delivery' ? (
+                        <div className="bg-teal-100 text-teal-800 px-4 py-2 rounded-md text-sm font-medium">
+                          🚚 Delivery Scheduled - Vehicle Preparation
                         </div>
                       ) : (
                         <ApprovalButton applicationId={app.id} status={app.status} />
