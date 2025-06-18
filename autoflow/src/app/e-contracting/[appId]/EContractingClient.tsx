@@ -324,12 +324,21 @@ export default function EContractingClient({ application }: EContractingClientPr
           <p className="text-sm text-gray-500 mb-4">
             Need help? Contact Westlake Financial at (888) 893-7937
           </p>
-          <Link 
-            href={`/portal/${application.id}?token=${application.token}`}
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-          >
-            ← Back to Customer Portal
-          </Link>
+          <div className="flex items-center justify-center gap-4">
+            <Link 
+              href="/"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              ← Return to Home
+            </Link>
+            <span className="text-gray-300">|</span>
+            <Link 
+              href={`/portal/${application.id}?token=${application.token}`}
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+            >
+              Customer Portal
+            </Link>
+          </div>
         </div>
       </div>
     </div>

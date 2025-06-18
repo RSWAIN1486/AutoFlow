@@ -2,36 +2,152 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { getAllApplications } from '@/lib/applicationStore';
 import Link from 'next/link';
-import { DocumentTextIcon, CheckCircleIcon, ExclamationTriangleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon, CheckCircleIcon, ExclamationTriangleIcon, MagnifyingGlassIcon, ArrowUpTrayIcon, EyeIcon } from '@heroicons/react/24/outline';
+
+interface ApplicationData {
+  id: number;
+  firstName: string;
+  lastName: string;
+  status: string;
+  selectedVehicle?: {
+    year: number;
+    make: string;
+    model: string;
+  };
+  token: string;
+  approvalTerms?: {
+    loanAmount: number;
+    interestRate: number;
+    termLength: number;
+    monthlyPayment: number;
+  };
+  uploadedDocuments: number;
+}
 
 export default function CustomerPortal() {
   const [applicationId, setApplicationId] = useState('');
-  const [searchResult, setSearchResult] = useState<any>(null);
+  const [searchResult, setSearchResult] = useState<ApplicationData | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!applicationId.trim()) return;
     
     setIsSearching(true);
     setShowResult(false);
+    setError(null);
     
-    // Simulate a brief search delay for better UX
-    setTimeout(() => {
-      const applications = getAllApplications();
-      const foundApp = applications.find(app => app.id.toString() === applicationId.trim());
+    try {
+      const response = await fetch(`/api/applications/search?id=${encodeURIComponent(applicationId.trim())}`);
+      const data = await response.json();
       
-      setSearchResult(foundApp || null);
+      if (data.success) {
+        setSearchResult(data.application);
+      } else {
+        setSearchResult(null);
+        setError(data.error || 'Application not found');
+      }
+    } catch (err) {
+      console.error('Search error:', err);
+      setSearchResult(null);
+      setError('Failed to search for application. Please try again.');
+    } finally {
       setShowResult(true);
       setIsSearching(false);
-    }, 800);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
+    }
+  };
+
+  const getStatusMessage = (status: string) => {
+    switch (status) {
+      case 'submitted':
+      case 'documents-pending':
+        return 'Please upload your required documents to continue.';
+      case 'documents-uploaded':
+        return 'Your documents have been received and are being reviewed.';
+      case 'under-review':
+        return 'Your application is currently under review.';
+      case 'approved':
+        return 'Congratulations! Your application has been approved.';
+      case 'contract-sent':
+        return 'Your contract has been sent for e-signing.';
+      case 'contract-signed':
+        return 'Your contract has been signed successfully.';
+      default:
+        return 'Please check your application status.';
+    }
+  };
+
+  const getNextAction = (status: string, searchResult: ApplicationData) => {
+    switch (status) {
+      case 'submitted':
+      case 'documents-pending':
+        return (
+          <Link
+            href={`/upload-documents/${searchResult.id}?token=${searchResult.token}`}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <ArrowUpTrayIcon className="h-5 w-5" />
+            Upload Documents
+          </Link>
+        );
+      case 'documents-uploaded':
+      case 'under-review':
+        return (
+          <Link
+            href={`/portal/${searchResult.id}?token=${searchResult.token}`}
+            className="inline-flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <EyeIcon className="h-5 w-5" />
+            View Application Status
+          </Link>
+        );
+      case 'approved':
+        return (
+          <Link
+            href={`/e-contracting/${searchResult.id}`}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <DocumentTextIcon className="h-5 w-5" />
+            Continue to E-Contracting
+          </Link>
+        );
+      case 'contract-sent':
+        return (
+          <Link
+            href={`/e-contracting/${searchResult.id}`}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <DocumentTextIcon className="h-5 w-5" />
+            Sign Your Contract
+          </Link>
+        );
+      case 'contract-signed':
+        return (
+          <Link
+            href={`/delivery-options/${searchResult.id}`}
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-teal-600 hover:from-green-700 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
+          >
+            <DocumentTextIcon className="h-5 w-5" />
+            Choose Delivery Options
+          </Link>
+        );
+      default:
+        return (
+          <Link
+            href={`/portal/${searchResult.id}?token=${searchResult.token}`}
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            View Application Portal
+          </Link>
+        );
     }
   };
 
@@ -42,7 +158,7 @@ export default function CustomerPortal() {
           Access Your Application
         </h3>
         <p className="text-gray-300">
-          Enter your application ID to check status and continue with e-contracting
+          Enter your application ID to check status and continue your application process
         </p>
       </div>
 
@@ -53,7 +169,7 @@ export default function CustomerPortal() {
             value={applicationId}
             onChange={(e) => setApplicationId(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Enter Application ID (e.g., 123)"
+            placeholder="Enter Application ID (e.g., 1750255028667)"
             className="flex-1 bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           <motion.button
@@ -112,31 +228,16 @@ export default function CustomerPortal() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
-                      <Link
-                        href={`/e-contracting/${searchResult.id}`}
-                        className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 shadow-lg"
-                      >
-                        <DocumentTextIcon className="h-5 w-5" />
-                        Continue to E-Contracting
-                      </Link>
+                      {getNextAction(searchResult.status, searchResult)}
                     </motion.div>
                   </div>
                 ) : (
                   <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
-                    <p className="text-yellow-300">
-                      {searchResult.status === 'submitted' && 'Your application is being reviewed.'}
-                      {searchResult.status === 'documents-pending' && 'Please upload your required documents.'}
-                      {searchResult.status === 'documents-uploaded' && 'Your documents have been received and are being reviewed.'}
-                      {searchResult.status === 'under-review' && 'Your application is currently under review.'}
-                      {!['submitted', 'documents-pending', 'documents-uploaded', 'under-review', 'approved'].includes(searchResult.status) && 'E-contracting is not yet available for your application.'}
+                    <p className="text-yellow-300 mb-4">
+                      {getStatusMessage(searchResult.status)}
                     </p>
                     <div className="mt-3">
-                      <Link
-                        href={`/portal/${searchResult.id}?token=${searchResult.token}`}
-                        className="text-blue-400 hover:text-blue-300 underline"
-                      >
-                        View Application Portal
-                      </Link>
+                      {getNextAction(searchResult.status, searchResult)}
                     </div>
                   </div>
                 )}
@@ -150,7 +251,7 @@ export default function CustomerPortal() {
                   </h4>
                 </div>
                 <p className="text-gray-300 mb-4">
-                  No application found with ID "{applicationId}". Please check your application ID and try again.
+                  {error || `No application found with ID "${applicationId}". Please check your application ID and try again.`}
                 </p>
                 <p className="text-sm text-gray-400">
                   Need help? Contact our support team or visit your email for your application details.

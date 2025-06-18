@@ -159,7 +159,7 @@ export default function Home() {
               Customer Portal
             </h2>
             <p className="text-lg text-gray-300">
-              Have an approved application? Access your e-contracting portal below.
+              Check your application status and continue your vehicle financing journey from any stage.
             </p>
           </div>
 
