@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAllApplications } from '@/lib/applicationStore';
 import { readdir, unlink, stat } from 'fs/promises';
 import { join } from 'path';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('Cleanup uploads request received');
     
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     let allFiles: string[] = [];
     try {
       allFiles = await readdir(uploadsDir);
-    } catch (error) {
+    } catch {
       console.log('Uploads directory does not exist or is empty');
       return NextResponse.json({
         success: true,
@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
         await unlink(filePath);
         deletedFiles.push(filename);
         console.log(`✅ Deleted orphaned file: ${filename} (${stats.size} bytes)`);
-      } catch (error) {
-        console.error(`❌ Error deleting file ${filename}:`, error);
+      } catch (fileError) {
+        console.error(`❌ Error deleting file ${filename}:`, fileError);
       }
     }
     
@@ -112,7 +112,7 @@ export async function GET() {
     let allFiles: string[] = [];
     try {
       allFiles = await readdir(uploadsDir);
-    } catch (error) {
+    } catch {
       allFiles = [];
     }
     
@@ -134,7 +134,7 @@ export async function GET() {
       description: 'Use POST to cleanup orphaned files'
     });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json({
       error: 'Failed to analyze uploads directory'
     }, { status: 500 });

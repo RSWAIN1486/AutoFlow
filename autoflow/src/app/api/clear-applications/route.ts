@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { clearAllApplications } from '@/lib/applicationStore';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('Clearing all applications request received');
     
