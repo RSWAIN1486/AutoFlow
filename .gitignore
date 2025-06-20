@@ -31,5 +31,5 @@ tasks/
 .roo/
 .taskmaster/
 .cursor/
-
+.cursor/mcp.json
 uploads/
