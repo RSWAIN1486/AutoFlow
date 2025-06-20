@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: autoflow
+    env: node
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+    disk:
+      name: autoflow-disk
+      mountPath: /opt/render/project/src
+      sizeGB: 1 
