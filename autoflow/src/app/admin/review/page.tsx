@@ -176,7 +176,7 @@ export default function AdminReviewPage() {
                               <p className="text-xs text-gray-500 truncate">{doc.originalName}</p>
                             </div>
                             <a 
-                              href={`/uploads/${doc.filename}`} 
+                              href={`/api/files/${doc.filename}`} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               className="ml-2 text-blue-600 hover:text-blue-800 text-sm font-medium"
