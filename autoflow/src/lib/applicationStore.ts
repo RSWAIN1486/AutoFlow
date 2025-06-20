@@ -320,4 +320,74 @@ export const updateDeliveryChoice = (
 // Force reload applications from file (useful for debugging)
 export const reloadApplications = (): void => {
   ensureApplicationsLoaded(true);
+};
+
+// Clear all applications and their uploaded documents
+export const clearAllApplications = async (): Promise<{ success: boolean; message: string; deletedFiles?: string[] }> => {
+  try {
+    ensureApplicationsLoaded(true);
+    
+    const deletedFiles: string[] = [];
+    const deletedCount = applications.length;
+    
+    // Collect all uploaded file paths before clearing
+    for (const app of applications) {
+      if (app.uploadedDocuments && app.uploadedDocuments.length > 0) {
+        for (const doc of app.uploadedDocuments) {
+          deletedFiles.push(doc.filename);
+        }
+      }
+    }
+    
+    console.log(`Found ${deletedFiles.length} files to delete:`, deletedFiles);
+    
+    // Delete uploaded files from the uploads directory BEFORE clearing applications
+    let actuallyDeletedFiles = 0;
+    if (deletedFiles.length > 0 && typeof window === 'undefined') {
+      // Only attempt file deletion on server-side
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      console.log(`Looking for files in: ${uploadsDir}`);
+      
+      for (const filename of deletedFiles) {
+        try {
+          const filePath = path.join(uploadsDir, filename);
+          console.log(`Attempting to delete: ${filePath}`);
+          
+          if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+            actuallyDeletedFiles++;
+            console.log(`✅ Successfully deleted file: ${filename}`);
+          } else {
+            console.log(`⚠️ File not found: ${filename}`);
+          }
+        } catch (fileError) {
+          console.error(`❌ Error deleting file ${filename}:`, fileError);
+        }
+      }
+    }
+    
+    // Clear the applications array AFTER deleting files
+    applications.length = 0;
+    
+    // Save the empty array to file
+    saveApplications();
+    
+    console.log(`Cleared ${deletedCount} applications and ${actuallyDeletedFiles}/${deletedFiles.length} uploaded files`);
+    
+    return {
+      success: true,
+      message: `Successfully cleared ${deletedCount} applications and deleted ${actuallyDeletedFiles} uploaded files`,
+      deletedFiles: deletedFiles
+    };
+    
+  } catch (error) {
+    console.error('Error clearing applications:', error);
+    return {
+      success: false,
+      message: `Failed to clear applications: ${error instanceof Error ? error.message : 'Unknown error'}`
+    };
+  }
 }; 

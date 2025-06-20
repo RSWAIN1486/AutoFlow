@@ -22,26 +22,32 @@ export async function POST(request: NextRequest) {
         continue;
       }
       
-      if (value instanceof File && value.size > 0) {
-        // Generate unique filename to avoid collisions
-        const fileExtension = value.name.split('.').pop() || '';
-        const uniqueFilename = `${Date.now()}-${uuidv4()}.${fileExtension}`;
+      // More compatible way to check if value is a file
+      // Check if it has file-like properties instead of using instanceof File
+      if (value && typeof value === 'object' && 'name' in value && 'size' in value && 'arrayBuffer' in value) {
+        const file = value as File;
         
-        // Convert file to buffer
-        const bytes = await value.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-        
-        // Save file to uploads directory
-        const filePath = join(uploadsDir, uniqueFilename);
-        await writeFile(filePath, buffer);
-        
-        uploadedFiles.push({
-          originalName: value.name,
-          filename: uniqueFilename,
-          path: `/uploads/${uniqueFilename}`,
-          fieldName,
-          uploadedAt: new Date()
-        });
+        if (file.size > 0) {
+          // Generate unique filename to avoid collisions
+          const fileExtension = file.name.split('.').pop() || '';
+          const uniqueFilename = `${Date.now()}-${uuidv4()}.${fileExtension}`;
+          
+          // Convert file to buffer
+          const bytes = await file.arrayBuffer();
+          const buffer = Buffer.from(bytes);
+          
+          // Save file to uploads directory
+          const filePath = join(uploadsDir, uniqueFilename);
+          await writeFile(filePath, buffer);
+          
+          uploadedFiles.push({
+            originalName: file.name,
+            filename: uniqueFilename,
+            path: `/uploads/${uniqueFilename}`,
+            fieldName,
+            uploadedAt: new Date()
+          });
+        }
       }
     }
 

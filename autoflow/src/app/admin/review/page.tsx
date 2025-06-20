@@ -5,6 +5,8 @@ import { DocumentTextIcon, HomeIcon } from '@heroicons/react/24/outline';
 import ApprovalButton from './ApprovalButton';
 import RefreshButton from './RefreshButton';
 import SendContractButton from './SendContractButton';
+import ClearAllButton from './ClearAllButton';
+import CleanupUploadsButton from './CleanupUploadsButton';
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -91,6 +93,8 @@ export default function AdminReviewPage() {
                 <HomeIcon className="h-4 w-4 mr-2" />
                 Home
               </Link>
+              <CleanupUploadsButton />
+              <ClearAllButton applicationCount={applications.length} />
               <RefreshButton />
             </div>
           </div>
