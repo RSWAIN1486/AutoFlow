@@ -111,35 +111,34 @@ export default function CustomerPortal() {
     }
   };
 
-
-
   return (
-    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-      <div className="text-center mb-8">
-        <h3 className="text-2xl font-semibold text-white mb-2">
+    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/20">
+      <div className="text-center mb-6 sm:mb-8">
+        <h3 className="text-xl sm:text-2xl font-semibold text-white mb-2">
           Access Your Application
         </h3>
-        <p className="text-gray-300">
+        <p className="text-sm sm:text-base text-gray-300 px-2">
           Enter your application ID to check status and continue your application process
         </p>
       </div>
 
       <div className="max-w-md mx-auto">
-        <div className="flex gap-3 mb-6">
+        {/* Mobile-first responsive search bar */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-6">
           <input
             type="text"
             value={applicationId}
             onChange={(e) => setApplicationId(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Enter Application ID (e.g., 1750255028667)"
-            className="flex-1 bg-white/10 border border-white/30 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter Application ID"
+            className="flex-1 bg-white/10 border border-white/30 rounded-lg px-3 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           />
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={handleSearch}
             disabled={isSearching || !applicationId.trim()}
-            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-4 sm:px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 text-sm sm:text-base w-full sm:w-auto"
           >
             {isSearching ? (
               <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
@@ -158,16 +157,17 @@ export default function CustomerPortal() {
             className="text-center"
           >
             {searchResult ? (
-              <div className="bg-slate-600 rounded-xl p-6 mb-6">
+              <div className="bg-slate-600 rounded-xl p-4 sm:p-6 mb-6">
                 <div className="flex items-center mb-3">
-                  <CheckCircleIcon className="h-8 w-8 text-green-400 mr-3" />
-                  <h3 className="text-lg font-semibold text-white">Application Found!</h3>
+                  <CheckCircleIcon className="h-6 sm:h-8 w-6 sm:w-8 text-green-400 mr-2 sm:mr-3 flex-shrink-0" />
+                  <h3 className="text-base sm:text-lg font-semibold text-white">Application Found!</h3>
                 </div>
                 
-                <div className="space-y-2 text-sm text-slate-200 mb-4">
+                <div className="space-y-2 text-xs sm:text-sm text-slate-200 mb-4 text-left">
                   <p><span className="font-semibold text-white">Name:</span> {searchResult.firstName} {searchResult.lastName}</p>
-                  <p><span className="font-semibold text-white">Status:</span> 
-                    <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${getStatusDisplayColor(searchResult.status)}`}>
+                  <p className="flex flex-wrap items-center gap-2">
+                    <span className="font-semibold text-white">Status:</span> 
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusDisplayColor(searchResult.status)}`}>
                       {getStatusDisplayText(searchResult.status)}
                     </span>
                   </p>
@@ -177,15 +177,15 @@ export default function CustomerPortal() {
                 </div>
 
                 {searchResult.status === 'approved' && searchResult.approvalTerms && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4">
                     <div className="flex items-center mb-3">
-                      <div className="text-green-600 text-lg">🎉</div>
-                      <div className="ml-3">
-                        <h4 className="font-semibold text-blue-800">Congratulations! Your loan is approved!</h4>
-                        <p className="text-sm text-blue-600">Approved by Westlake Financial</p>
+                      <div className="text-green-600 text-lg flex-shrink-0">🎉</div>
+                      <div className="ml-3 text-left">
+                        <h4 className="font-semibold text-blue-800 text-sm sm:text-base">Congratulations! Your loan is approved!</h4>
+                        <p className="text-xs sm:text-sm text-blue-600">Approved by Westlake Financial</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm mb-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm mb-3">
                       <div>
                         <span className="font-medium text-blue-800">Loan Amount:</span>
                         <div className="text-blue-700 font-semibold">${searchResult.approvalTerms.loanAmount.toLocaleString()}</div>
@@ -203,7 +203,7 @@ export default function CustomerPortal() {
                         <div className="text-blue-700 font-semibold">{searchResult.approvalTerms.termLength} months</div>
                       </div>
                     </div>
-                    <div className="text-sm text-blue-600 bg-blue-100 rounded p-3">
+                    <div className="text-xs sm:text-sm text-blue-600 bg-blue-100 rounded p-2 sm:p-3 text-left">
                       <p><strong>Next Step:</strong> Please wait for our team to prepare your e-contracting documents. You will be notified when they are ready for your signature.</p>
                       <p className="mt-1 text-xs">Expected timeline: 1-2 business hours</p>
                     </div>
@@ -211,45 +211,45 @@ export default function CustomerPortal() {
                 )}
 
                 {searchResult.status === 'contract-sent' && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 sm:p-4 mb-4">
                     <div className="flex items-center mb-3">
-                      <div className="text-orange-600 text-lg">📤</div>
-                      <div className="ml-3">
-                        <h4 className="font-semibold text-orange-800">E-Contract Ready for Signature!</h4>
-                        <p className="text-sm text-orange-600">Your loan documents are ready to be signed</p>
+                      <div className="text-orange-600 text-lg flex-shrink-0">📤</div>
+                      <div className="ml-3 text-left">
+                        <h4 className="font-semibold text-orange-800 text-sm sm:text-base">E-Contract Ready for Signature!</h4>
+                        <p className="text-xs sm:text-sm text-orange-600">Your loan documents are ready to be signed</p>
                       </div>
                     </div>
-                    <div className="text-sm text-orange-700">
+                    <div className="text-xs sm:text-sm text-orange-700 text-left">
                       <p>Your e-contracting documents have been prepared and are ready for your digital signature.</p>
                     </div>
                   </div>
                 )}
 
                 {searchResult.status === 'contract-signed' && (
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 sm:p-4 mb-4">
                     <div className="flex items-center mb-3">
-                      <div className="text-emerald-600 text-lg">✍️</div>
-                      <div className="ml-3">
-                        <h4 className="font-semibold text-emerald-800">Contract Signed Successfully!</h4>
-                        <p className="text-sm text-emerald-600">Moving to delivery options</p>
+                      <div className="text-emerald-600 text-lg flex-shrink-0">✍️</div>
+                      <div className="ml-3 text-left">
+                        <h4 className="font-semibold text-emerald-800 text-sm sm:text-base">Contract Signed Successfully!</h4>
+                        <p className="text-xs sm:text-sm text-emerald-600">Moving to delivery options</p>
                       </div>
                     </div>
-                    <div className="text-sm text-emerald-700">
+                    <div className="text-xs sm:text-sm text-emerald-700 text-left">
                       <p>Your loan contract has been signed. Next step is to arrange vehicle delivery.</p>
                     </div>
                   </div>
                 )}
 
                 {searchResult.status === 'awaiting-delivery' && (
-                  <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 mb-4">
+                  <div className="bg-teal-50 border border-teal-200 rounded-lg p-3 sm:p-4 mb-4">
                     <div className="flex items-center mb-3">
-                      <div className="text-teal-600 text-lg">🚚</div>
-                      <div className="ml-3">
-                        <h4 className="font-semibold text-teal-800">Delivery Arranged!</h4>
-                        <p className="text-sm text-teal-600">Your vehicle delivery has been scheduled</p>
+                      <div className="text-teal-600 text-lg flex-shrink-0">🚚</div>
+                      <div className="ml-3 text-left">
+                        <h4 className="font-semibold text-teal-800 text-sm sm:text-base">Delivery Arranged!</h4>
+                        <p className="text-xs sm:text-sm text-teal-600">Your vehicle delivery has been scheduled</p>
                       </div>
                     </div>
-                    <div className="text-sm text-teal-700">
+                    <div className="text-xs sm:text-sm text-teal-700 text-left">
                       <p>Your delivery options have been confirmed. Our team will contact you with final delivery details.</p>
                     </div>
                   </div>
@@ -259,7 +259,7 @@ export default function CustomerPortal() {
                   {searchResult.status === 'documents-pending' && (
                     <Link
                       href={`/upload-documents/${searchResult.id}?token=${searchResult.token}`}
-                      className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                      className="block w-full bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors text-sm sm:text-base"
                     >
                       📄 Continue - Upload Documents
                     </Link>
@@ -267,22 +267,22 @@ export default function CustomerPortal() {
 
                   {searchResult.status === 'documents-uploaded' && (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-center">
-                      <p className="text-yellow-800 font-medium">Documents Uploaded Successfully</p>
-                      <p className="text-yellow-600 text-sm">Under review by our lenders</p>
+                      <p className="text-yellow-800 font-medium text-sm sm:text-base">Documents Uploaded Successfully</p>
+                      <p className="text-yellow-600 text-xs sm:text-sm">Under review by our lenders</p>
                     </div>
                   )}
 
                   {searchResult.status === 'under-review' && (
                     <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 text-center">
-                      <p className="text-purple-800 font-medium">Application Under Review</p>
-                      <p className="text-purple-600 text-sm">We will notify you once approved</p>
+                      <p className="text-purple-800 font-medium text-sm sm:text-base">Application Under Review</p>
+                      <p className="text-purple-600 text-xs sm:text-sm">We will notify you once approved</p>
                     </div>
                   )}
 
                   {searchResult.status === 'contract-sent' && (
                     <Link
                       href={`/e-contracting/${searchResult.id}`}
-                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors text-sm sm:text-base"
                     >
                       ✍️ Continue to E-Contracting
                     </Link>
@@ -291,7 +291,7 @@ export default function CustomerPortal() {
                   {searchResult.status === 'contract-signed' && (
                     <Link
                       href={`/delivery-options/${searchResult.id}`}
-                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors"
+                      className="block w-full bg-emerald-600 hover:bg-emerald-700 text-white text-center py-3 px-4 rounded-lg font-medium transition-colors text-sm sm:text-base"
                     >
                       🚚 Continue to Delivery Options
                     </Link>
@@ -299,17 +299,17 @@ export default function CustomerPortal() {
                 </div>
               </div>
             ) : (
-              <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-6">
+              <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4 sm:p-6">
                 <div className="flex items-center justify-center mb-4">
-                  <ExclamationTriangleIcon className="h-8 w-8 text-red-400 mr-2" />
-                  <h4 className="text-xl font-semibold text-white">
+                  <ExclamationTriangleIcon className="h-6 sm:h-8 w-6 sm:w-8 text-red-400 mr-2 flex-shrink-0" />
+                  <h4 className="text-lg sm:text-xl font-semibold text-white">
                     Application Not Found
                   </h4>
                 </div>
-                <p className="text-gray-300 mb-4">
+                <p className="text-gray-300 mb-4 text-sm sm:text-base">
                   {error || `No application found with ID "${applicationId}". Please check your application ID and try again.`}
                 </p>
-                <p className="text-sm text-gray-400">
+                <p className="text-xs sm:text-sm text-gray-400">
                   Need help? Contact our support team or visit your email for your application details.
                 </p>
               </div>
@@ -318,13 +318,13 @@ export default function CustomerPortal() {
         )}
       </div>
 
-      <div className="mt-8 pt-6 border-t border-white/20 text-center">
-        <p className="text-sm text-gray-400 mb-2">
+      <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-white/20 text-center">
+        <p className="text-xs sm:text-sm text-gray-400 mb-2">
           Do not have an application yet?
         </p>
         <Link
           href="/apply"
-          className="text-blue-400 hover:text-blue-300 underline"
+          className="text-blue-400 hover:text-blue-300 underline text-sm sm:text-base"
         >
           Start Your Application →
         </Link>
